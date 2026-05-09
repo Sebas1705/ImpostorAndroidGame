@@ -1,0 +1,18 @@
+plugins {
+    alias(libs.plugins.buildlogic.library)
+    // Choose one depending on layer:
+    // alias(libs.plugins.buildlogic.core)
+    // alias(libs.plugins.buildlogic.data)
+    // alias(libs.plugins.buildlogic.domain)
+    alias(libs.plugins.buildlogic.unit.test)
+}
+
+android {
+    namespace = "es.sebas1705.yourmodule"
+}
+
+dependencies {
+    // implementation(projects.core.common)
+    // implementation(libs.androidx.core.ktx)
+}
+

@@ -1,0 +1,8 @@
+### GetQuestions
+GET {{baseUrl}}/api.php?amount=10
+
+> {%
+    client.test("Response should be 200", function () {
+        client.assert(response.status === 200)
+    });
+ %}

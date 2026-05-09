@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="core_designsystem_confirm">Confirm</string>
+    <string name="core_designsystem_dismiss">Dismiss</string>
+
+
+
+</resources>

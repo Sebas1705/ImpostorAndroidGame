@@ -1,0 +1,61 @@
+﻿name: Label Sync
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/labels.json'
+      - '.github/workflows/label-sync.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  sync_labels:
+    name: Sync Labels
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Sync repository labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const labelsPath = path.join(process.env.GITHUB_WORKSPACE, '.github', 'labels.json');
+            const labels = JSON.parse(fs.readFileSync(labelsPath, 'utf8'));
+            const { owner, repo } = context.repo;
+            const existingLabels = await github.paginate(
+              github.rest.issues.listLabelsForRepo,
+              {
+                owner,
+                repo,
+                per_page: 100,
+              }
+            );
+            const existingByName = new Map(
+              existingLabels.map((label) => [label.name.toLowerCase(), label])
+            );
+            for (const label of labels) {
+              const existing = existingByName.get(label.name.toLowerCase());
+              if (existing) {
+                await github.rest.issues.updateLabel({
+                  owner,
+                  repo,
+                  name: existing.name,
+                  new_name: label.name,
+                  color: label.color,
+                  description: label.description,
+                });
+                core.info(`Updated label: ${label.name}`);
+              } else {
+                await github.rest.issues.createLabel({
+                  owner,
+                  repo,
+                  name: label.name,
+                  color: label.color,
+                  description: label.description,
+                });
+                core.info(`Created label: ${label.name}`);
+              }
+            }

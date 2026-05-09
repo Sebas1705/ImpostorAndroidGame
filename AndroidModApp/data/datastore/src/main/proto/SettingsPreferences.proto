@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option java_package = "es.sebas1705.datastore";
+option java_multiple_files = true;
+
+message SettingsPreferences {
+    bool firstTime = 1;
+    float musicVolume = 2;
+    float soundVolume = 3;
+    int32 contrast = 4;
+    bool defaultSet = 5;
+}

@@ -1,0 +1,72 @@
+﻿[
+  {
+    "name": "bug",
+    "color": "d73a4a",
+    "description": "Broken behavior in template defaults or tooling"
+  },
+  {
+    "name": "enhancement",
+    "color": "a2eeef",
+    "description": "Improvement request for the template or workflow"
+  },
+  {
+    "name": "template",
+    "color": "5319e7",
+    "description": "Module scaffold, build-logic, or template evolution work"
+  },
+  {
+    "name": "documentation",
+    "color": "0075ca",
+    "description": "Docs-only changes or gaps in guidance"
+  },
+  {
+    "name": "good first issue",
+    "color": "7057ff",
+    "description": "Good entry point for first-time contributors"
+  },
+  {
+    "name": "priority/critical",
+    "color": "b60205",
+    "description": "Needs immediate maintainer attention"
+  },
+  {
+    "name": "priority/high",
+    "color": "d93f0b",
+    "description": "Important and should be planned soon"
+  },
+  {
+    "name": "priority/normal",
+    "color": "fbca04",
+    "description": "Default planning priority"
+  },
+  {
+    "name": "dependencies",
+    "color": "0366d6",
+    "description": "Dependency update or maintenance work"
+  },
+  {
+    "name": "security",
+    "color": "b60205",
+    "description": "Security-related change, review, or incident"
+  },
+  {
+    "name": "ci",
+    "color": "1d76db",
+    "description": "Continuous integration or automation changes"
+  },
+  {
+    "name": "build-logic",
+    "color": "0e8a16",
+    "description": "Convention plugins and shared Gradle logic"
+  },
+  {
+    "name": "breaking-change",
+    "color": "b60205",
+    "description": "Marks changes that require migration notes in release notes"
+  },
+  {
+    "name": "skip-changelog",
+    "color": "cfd3d7",
+    "description": "Exclude this pull request from generated changelog and release notes"
+  }
+]

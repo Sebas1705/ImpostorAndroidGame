@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_resources_any">Cualquiera</string>
+    <string name="core_resources_icon_content">Icono de App</string>
+    <string name="core_resources_back_arrow_content">Flecha hacia atrás</string>
+    <string name="core_resources_back">Atrás</string>
+</resources>

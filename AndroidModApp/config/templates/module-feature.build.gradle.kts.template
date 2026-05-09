@@ -1,0 +1,14 @@
+plugins {
+    alias(libs.plugins.buildlogic.feature)
+    alias(libs.plugins.buildlogic.unit.test)
+}
+
+android {
+    namespace = "es.sebas1705.feature.yourfeature"
+}
+
+dependencies {
+    // implementation(projects.core.ui)
+    // implementation(projects.domain.models)
+}
+

@@ -1,0 +1,26 @@
+﻿changelog:
+  exclude:
+    labels:
+      - "skip-changelog"
+  categories:
+    - title: "Breaking changes"
+      labels:
+        - "breaking-change"
+    - title: "Features"
+      labels:
+        - "enhancement"
+        - "template"
+    - title: "Build and CI"
+      labels:
+        - "ci"
+        - "build-logic"
+        - "dependencies"
+    - title: "Documentation"
+      labels:
+        - "documentation"
+    - title: "Bug fixes"
+      labels:
+        - "bug"
+    - title: "Security"
+      labels:
+        - "security"

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_resources_app_name" translatable="false">App name</string>
+    <string name="core_resources_any">Any</string>
+    <string name="core_resources_icon_content">App icon</string>
+    <string name="core_resources_back_arrow_content">Back arrow</string>
+    <string name="core_resources_back">Back</string>
+</resources>

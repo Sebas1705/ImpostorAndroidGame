@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_designsystem_select_option">Select an option</string>
+    <string name="core_designsystem_email">Email</string>
+    <string name="core_designsystem_password">Password</string>
+    <string name="core_designsystem_leading_content">Leading Content</string>
+    <string name="core_designsystem_trailing_content">Trailing content</string>
+</resources>

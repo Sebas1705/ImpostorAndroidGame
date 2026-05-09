@@ -1,0 +1,18 @@
+@startuml
+title Secuencia típica: pantalla -> UseCase -> Repositorio -> DataSource
+
+actor Usuario
+participant "Feature (UI/VM)" as FEAT
+participant "UseCase (Domain)" as UC
+participant "Repo (Domain interface)" as REPO
+participant "DataSource (Data impl)" as DS
+
+Usuario -> FEAT : Interacción (clic / entrada)
+FEAT -> UC : ejecutar(params)
+UC -> REPO : obtenerDatos(params)
+REPO -> DS : consultaRemote()/consultaLocal()
+DS --> REPO : datosDTO
+REPO --> UC : datosDomain
+UC --> FEAT : resultado
+FEAT --> Usuario : render
+@enduml

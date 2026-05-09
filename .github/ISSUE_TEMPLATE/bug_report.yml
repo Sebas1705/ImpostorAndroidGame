@@ -1,0 +1,54 @@
+﻿name: Bug report
+description: Report a broken behavior in the template or its default setup.
+title: "[Bug]: "
+labels:
+  - bug
+  - priority/normal
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem. Please include enough detail to reproduce it from the repository root.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened and what did you expect instead?
+      placeholder: The template fails when...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: List the exact steps to reproduce the issue.
+      placeholder: |
+        1. Clone the repository
+        2. cd AndroidModApp
+        3. Run .\gradlew.bat ...
+        4. Observe the failure
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, JDK, Android Studio/Gradle versions, and any relevant context.
+      placeholder: Windows 11, JDK 21, Android Studio ..., Gradle ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Paste the relevant stack trace, CI failure, or screenshots.
+      render: shell
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues before opening this report.
+          required: true
+        - label: I can reproduce this issue on the current `main` branch.
+          required: true

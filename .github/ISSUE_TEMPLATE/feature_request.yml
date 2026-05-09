@@ -1,0 +1,54 @@
+﻿name: Feature request
+description: Suggest an improvement to the template, tooling, docs, or contributor workflow.
+title: "[Feature]: "
+labels:
+  - enhancement
+  - priority/normal
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion. Use this form for improvements to architecture, tooling, scaffolding, or maintenance workflow.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or opportunity
+      description: What pain point or missing capability are you trying to solve?
+      placeholder: Teams adopting the template need...
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the change you want and how it should work.
+      placeholder: Add a new convention plugin, workflow, template, or guide...
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact and rollout
+      description: Who benefits, what files/modules change, and any migration concerns.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Template scaffolding
+        - Build logic
+        - CI/CD
+        - Documentation
+        - Quality tooling
+        - Architecture
+    validations:
+      required: true
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and discussions before opening this request.
+          required: true
+        - label: I am willing to help validate the proposed change if needed.
+          required: false

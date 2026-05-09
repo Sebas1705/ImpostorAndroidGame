@@ -1,0 +1,49 @@
+name: Changelog Label Gate
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    types: [ opened, reopened, synchronize, labeled, unlabeled, ready_for_review ]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  changelog_label_gate:
+    name: Changelog Label Gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate changelog label presence
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const allowedLabels = new Set([
+              'bug',
+              'enhancement',
+              'documentation',
+              'ci',
+              'security',
+              'breaking-change',
+              'skip-changelog',
+            ]);
+
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.setFailed('This workflow must run on pull_request events.');
+              return;
+            }
+
+            const labels = (pr.labels || []).map((label) => label.name.toLowerCase());
+            const matched = labels.filter((label) => allowedLabels.has(label));
+
+            if (matched.length === 0) {
+              core.setFailed(
+                'Missing changelog label. Add one of: bug, enhancement, documentation, ci, security, breaking-change, skip-changelog.'
+              );
+              return;
+            }
+
+            core.info(`Matched changelog label(s): ${matched.join(', ')}`);
+

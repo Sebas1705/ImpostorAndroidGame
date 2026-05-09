@@ -1,0 +1,51 @@
+build:
+  # Gradual adoption target: keep this high initially, then reduce in small PRs.
+  # Suggested path: 500 -> 300 -> 150 -> 50 -> 0.
+  maxIssues: 300
+  excludeCorrectable: false
+
+config:
+  validation: true
+  warningsAsErrors: false
+  checkExhaustiveness: false
+
+complexity:
+  active: true
+  ComplexCondition:
+    active: true
+    threshold: 4
+  LongMethod:
+    active: true
+    threshold: 60
+  LongParameterList:
+    active: true
+    functionThreshold: 10
+    constructorThreshold: 10
+
+style:
+  active: true
+  MaxLineLength:
+    active: true
+    maxLineLength: 160
+  MagicNumber:
+    active: false
+  NewLineAtEndOfFile:
+    active: false
+  UnusedPrivateProperty:
+    active: false
+  UnusedPrivateMember:
+    active: false
+  UnusedParameter:
+    active: false
+
+naming:
+  active: true
+  FunctionNaming:
+    active: false
+
+exceptions:
+  active: true
+  TooGenericExceptionCaught:
+    active: false
+  TooGenericExceptionThrown:
+    active: false
