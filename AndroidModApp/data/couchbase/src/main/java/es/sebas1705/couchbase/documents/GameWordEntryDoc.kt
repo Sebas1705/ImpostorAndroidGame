@@ -1,0 +1,14 @@
+package es.sebas1705.couchbase.documents
+
+import es.sebas1705.couchbase.documents.abstracts.Document
+
+/**
+ * Couchbase document model for playable game words.
+ */
+data class GameWordEntryDoc(
+    val id: String,
+    val word: String,
+    val clue: List<String>,
+    val category: String
+) : Document(id)
+

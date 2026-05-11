@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option java_package = "es.sebas1705.datastore";
+option java_multiple_files = true;
+
+message GamePreferences {
+    repeated string selected_categories = 1;
+    repeated string players = 2;
+    bool default_set = 3;
+    string mode = 4;
+    int32 impostors = 5;
+    bool show_impostors_in_result = 6;
+}

@@ -11,11 +11,14 @@ dependencies {
     api(projects.core.ui)
     api(projects.core.designsystem)
 
+    api(projects.domain.usescases.authentication)
     api(projects.domain.usescases.settings)
-    api(projects.domain.usescases.analytics)
-    api(projects.domain.usescases.opendb)
 
+    api(projects.feature.debug)
+    api(projects.feature.home.face.nav)
+    api(projects.feature.login)
+    api(projects.feature.settings)
     api(projects.feature.splash)
-    api(projects.feature.mvisample)
-    api(projects.feature.mvvmsample)
+
+    implementation(libs.material.icons.extended)
 }

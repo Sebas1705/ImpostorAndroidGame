@@ -33,14 +33,23 @@ Quick module inventory grouped by layer.
 - `:domain:models`
 - `:domain:services`
 - `:domain:usescases:analytics`
+- `:domain:usescases:authentication`
+- `:domain:usescases:game`
 - `:domain:usescases:opendb`
 - `:domain:usescases:settings`
 
 ## Feature
 
+- `:feature:home:face`
+- `:feature:home:face:nav`
+- `:feature:home:face:categories`
+- `:feature:home:face:users`
+- `:feature:home:ranking`
+- `:feature:home:profile`
+- `:feature:login`
 - `:feature:main`
-- `:feature:mvisample`
-- `:feature:mvvmsample`
+- `:feature:debug`
+- `:feature:settings`
 - `:feature:splash`
 
 ## Notes

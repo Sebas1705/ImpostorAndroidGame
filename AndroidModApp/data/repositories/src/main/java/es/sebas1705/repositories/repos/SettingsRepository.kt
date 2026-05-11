@@ -24,10 +24,6 @@ class SettingsRepository @Inject constructor(
     override suspend fun update(
         settingsData: SettingsData
     ) {
-        settingsPreferencesDataSource.saveFirstTime(settingsData.firstTime)
-        settingsPreferencesDataSource.saveMusicVolume(settingsData.musicVolume)
-        settingsPreferencesDataSource.saveSoundVolume(settingsData.soundVolume)
-        settingsPreferencesDataSource.saveAppContrast(settingsData.appContrast)
+        settingsPreferencesDataSource.saveSettings(settingsData)
     }
-
 }

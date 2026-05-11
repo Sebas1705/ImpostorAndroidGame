@@ -4,6 +4,18 @@ import android.content.Context
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 
+private const val DEFAULT_WEB_CLIENT_ID_RES = "default_web_client_id"
+
+private fun Context.resolveServerClientId(): String {
+    val resourceId = resources.getIdentifier(
+        DEFAULT_WEB_CLIENT_ID_RES,
+        "string",
+        packageName
+    )
+    return if (resourceId != 0) getString(resourceId)
+    else SettingsAuth.FALLBACK_SERVER_CLIENT_ID
+}
+
 /**
  * Extension function that get the Google credential request
  *
@@ -21,7 +33,7 @@ val Context.getCredentialRequestGoogle: GetCredentialRequest
         .addCredentialOption(
             GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(SettingsAuth.FILTER_BY_AUTHORIZED_ACCOUNTS)
-                .setServerClientId("875884945428-k0hdf0jcctbne94ors1khudputut8klj.apps.googleusercontent.com")
+                .setServerClientId(resolveServerClientId())
                 .build()
         )
         .build()

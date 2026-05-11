@@ -2,6 +2,7 @@ package es.sebas1705.mappers
 
 import es.sebas1705.common.theme.ThemeContrast
 import es.sebas1705.datastore.model.SettingsData
+import es.sebas1705.models.AppLanguage
 import es.sebas1705.models.SettingsModel
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -15,7 +16,8 @@ class SettingsTestMappers {
             musicVolume = 0.5f,
             soundVolume = 0.5f,
             appContrast = ThemeContrast.Low.ordinal,
-            defaultSet = true
+            defaultSet = true,
+            appLanguage = AppLanguage.English.code,
         )
 
         val settingsModel = settingsData.toModel()
@@ -24,6 +26,7 @@ class SettingsTestMappers {
         assertEquals(settingsData.musicVolume, settingsModel.musicVolume)
         assertEquals(settingsData.soundVolume, settingsModel.soundVolume)
         assertEquals(ThemeContrast.entries[settingsData.appContrast], settingsModel.appContrast)
+        assertEquals(AppLanguage.English, settingsModel.appLanguage)
     }
 
     @Test
@@ -32,7 +35,8 @@ class SettingsTestMappers {
             firstTime = false,
             musicVolume = 0.5f,
             soundVolume = 0.5f,
-            appContrast = ThemeContrast.Low
+            appContrast = ThemeContrast.Low,
+            appLanguage = AppLanguage.Spanish,
         )
 
         val settingsData = settingsModel.toData()
@@ -41,5 +45,6 @@ class SettingsTestMappers {
         assertEquals(settingsModel.musicVolume, settingsData.musicVolume)
         assertEquals(settingsModel.soundVolume, settingsData.soundVolume)
         assertEquals(settingsModel.appContrast.ordinal, settingsData.appContrast)
+        assertEquals(settingsModel.appLanguage.code, settingsData.appLanguage)
     }
 }

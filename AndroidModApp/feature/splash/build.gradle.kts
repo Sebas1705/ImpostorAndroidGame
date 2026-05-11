@@ -11,4 +11,5 @@ dependencies {
     api(projects.core.ui)
     api(projects.core.designsystem)
     api(projects.domain.usescases.analytics)
+    implementation(libs.lottie.compose)
 }

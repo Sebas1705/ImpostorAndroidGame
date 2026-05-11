@@ -1,26 +1,23 @@
 package es.sebas1705.main
 
-import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
+import androidx.core.os.LocaleListCompat
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.ui.NavDisplay
+import androidx.appcompat.app.AppCompatDelegate
+import es.sebas1705.common.utlis.extensions.primitives.push
 import es.sebas1705.common.utlis.extensions.primitives.pushAndFree
-import es.sebas1705.main.debug.DebugToolsScreen
+import es.sebas1705.main.design.AppNavDesign
+import es.sebas1705.main.models.AppNavOverlayActions
+import es.sebas1705.main.models.AppNavOverlayState
 import es.sebas1705.main.viewmodel.MainIntent
 import es.sebas1705.main.viewmodel.MainViewModel
-import es.sebas1705.mvisample.MviSampleScreen
-import es.sebas1705.mvvmsample.MvvmSampleScreen
-import es.sebas1705.splash.SplashScreen
-import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 
 /**
  * Navigation for the app.
@@ -29,62 +26,56 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
  * @author Sebas1705 01/03/2025
  */
 @Composable
+@Suppress("LongMethod")
 fun AppNav(
     modifier: Modifier = Modifier,
-    isDebugBuild: Boolean = false,
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val backStack = rememberNavBackStack(AppGraph.SplashScreen)
     val mainState by mainViewModel.uiState.collectAsStateWithLifecycle()
+    val currentDestination = backStack.lastOrNull() as? AppGraph
+    val showSettingsDialog = rememberSaveable { mutableStateOf(false) }
+
     LaunchedEffect(null) {
         mainViewModel.eventHandler(MainIntent.ChargeData)
     }
     LaunchedEffect(mainState.splashFinished) {
         if (mainState.splashFinished) {
-            backStack.pushAndFree(AppGraph.MVISampleScreen)
+            backStack.pushAndFree(
+                if (mainState.isUserLogged) AppGraph.HomeScreen
+                else AppGraph.LoginScreen
+            )
         }
     }
-    NavDisplay(
+
+    LaunchedEffect(mainState.appLanguage) {
+        AppCompatDelegate.setApplicationLocales(
+            LocaleListCompat.forLanguageTags(mainState.appLanguage.code)
+        )
+    }
+
+    AppNavDesign(
         modifier = modifier,
         backStack = backStack,
-        entryDecorators = listOf(
-            rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator()
+        overlayState = AppNavOverlayState(
+            currentDestination = currentDestination,
+            showSettingsDialog = showSettingsDialog.value
         ),
-        transitionSpec = {
-            ContentTransform(
-                slideInHorizontally(initialOffsetX = { it }),
-                ExitTransition.None
-            )
-        },
-        popTransitionSpec = {
-            ContentTransform(
-                slideInHorizontally(initialOffsetX = { it }),
-                ExitTransition.None
-            )
-        },
-        entryProvider = entryProvider {
-            entry<AppGraph.SplashScreen> {
-                SplashScreen()
+        overlayActions = AppNavOverlayActions(
+            onOpenSettings = { showSettingsDialog.value = true },
+            onDismissSettings = { showSettingsDialog.value = false },
+            onOpenCategories = {
+                showSettingsDialog.value = false
+                backStack.pushAndFree(AppGraph.HomeScreen)
+            },
+            onOpenDebugTools = {
+                showSettingsDialog.value = false
+                backStack.push(AppGraph.DebugToolsScreen)
+            },
+            onSignedOut = {
+                showSettingsDialog.value = false
+                backStack.pushAndFree(AppGraph.LoginScreen)
             }
-            entry<AppGraph.MvvmSampleScreen> {
-                MvvmSampleScreen(
-                    onMVINav = { backStack.pushAndFree(AppGraph.MVISampleScreen) },
-                    showDebugActions = isDebugBuild,
-                    onDebugNav = {
-                        if (isDebugBuild) {
-                            backStack.pushAndFree(AppGraph.DebugToolsScreen)
-                        }
-                    }
-                )
-            }
-            entry<AppGraph.MVISampleScreen> {
-                MviSampleScreen { backStack.pushAndFree(AppGraph.MvvmSampleScreen) }
-            }
-            entry<AppGraph.DebugToolsScreen> {
-                DebugToolsScreen(onBack = { backStack.pushAndFree(AppGraph.MvvmSampleScreen) })
-            }
-        }
+        )
     )
 }
-

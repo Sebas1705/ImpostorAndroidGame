@@ -17,5 +17,6 @@ data class SettingsModel (
     val firstTime: Boolean,
     val musicVolume: Float,
     val soundVolume: Float,
-    val appContrast: ThemeContrast
+    val appContrast: ThemeContrast,
+    val appLanguage: AppLanguage,
 )

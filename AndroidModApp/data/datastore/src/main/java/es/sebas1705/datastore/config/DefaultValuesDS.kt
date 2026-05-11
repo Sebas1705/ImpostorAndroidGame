@@ -22,4 +22,5 @@ object DefaultValuesDS {
     const val MUSIC_VOLUME = 1.0f
     const val SOUND_VOLUME = 1.0f
     const val APP_UI_CONTRAST = 0
+    const val APP_LANGUAGE = "en"
 }

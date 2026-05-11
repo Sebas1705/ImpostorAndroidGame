@@ -18,7 +18,6 @@
         </compositeConfiguration>
         <option name="testRunner" value="CHOOSE_PER_TEST" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="21" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
@@ -48,12 +47,23 @@
             <option value="$PROJECT_DIR$/domain/services" />
             <option value="$PROJECT_DIR$/domain/usescases" />
             <option value="$PROJECT_DIR$/domain/usescases/analytics" />
+            <option value="$PROJECT_DIR$/domain/usescases/authentication" />
+            <option value="$PROJECT_DIR$/domain/usescases/game" />
             <option value="$PROJECT_DIR$/domain/usescases/opendb" />
             <option value="$PROJECT_DIR$/domain/usescases/settings" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/debug" />
+            <option value="$PROJECT_DIR$/feature/home" />
+            <option value="$PROJECT_DIR$/feature/home/face" />
+            <option value="$PROJECT_DIR$/feature/home/face/categories" />
+            <option value="$PROJECT_DIR$/feature/home/face/mode" />
+            <option value="$PROJECT_DIR$/feature/home/face/nav" />
+            <option value="$PROJECT_DIR$/feature/home/face/users" />
+            <option value="$PROJECT_DIR$/feature/home/profile" />
+            <option value="$PROJECT_DIR$/feature/home/ranking" />
+            <option value="$PROJECT_DIR$/feature/login" />
             <option value="$PROJECT_DIR$/feature/main" />
-            <option value="$PROJECT_DIR$/feature/mvisample" />
-            <option value="$PROJECT_DIR$/feature/mvvmsample" />
+            <option value="$PROJECT_DIR$/feature/settings" />
             <option value="$PROJECT_DIR$/feature/splash" />
           </set>
         </option>

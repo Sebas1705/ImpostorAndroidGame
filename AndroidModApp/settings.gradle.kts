@@ -12,6 +12,9 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -49,11 +52,21 @@ include(":domain:services")
 include(":domain:mappers")
 include(":domain:usescases")
 include(":domain:usescases:analytics")
+include(":domain:usescases:authentication")
+include(":domain:usescases:game")
 include(":domain:usescases:opendb")
 include(":domain:usescases:settings")
 
 include(":feature")
 include(":feature:main")
+include(":feature:home:face")
+include(":feature:home:face:nav")
+include(":feature:home:face:categories")
+include(":feature:home:face:users")
+include(":feature:home:face:mode")
+include(":feature:home:ranking")
+include(":feature:home:profile")
+include(":feature:login")
 include(":feature:splash")
-include(":feature:mvvmsample")
-include(":feature:mvisample")
+include(":feature:debug")
+include(":feature:settings")

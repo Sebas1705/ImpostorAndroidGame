@@ -35,7 +35,7 @@ abstract class MVIBaseViewModel<S : MVIBaseState, I : MVIBaseIntent>(
 ) : ViewModel() {
 
     private val initialState: S by lazy { initState() }
-    private val _uiState: MutableStateFlow<S> by lazy { MutableStateFlow(initialState) }
+    protected val _uiState: MutableStateFlow<S> by lazy { MutableStateFlow(initialState) }
     val uiState
         get() = _uiState
             .stateIn(

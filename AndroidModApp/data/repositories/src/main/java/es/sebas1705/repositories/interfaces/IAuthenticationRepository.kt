@@ -87,4 +87,14 @@ interface IAuthenticationRepository {
      */
     fun isUserLogged(): Boolean
 
+    /**
+     * Reads whether app expects an authenticated user in this installation.
+     */
+    suspend fun isSessionExpected(): Boolean
+
+    /**
+     * Persists whether app should expect an authenticated user in this installation.
+     */
+    suspend fun setSessionExpected(value: Boolean)
+
 }

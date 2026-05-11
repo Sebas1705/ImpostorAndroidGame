@@ -15,10 +15,12 @@ interface AppGraph: NavKey{
     object SplashScreen : AppGraph
 
     @Serializable
-    object MvvmSampleScreen : AppGraph
+    object LoginScreen : AppGraph
 
     @Serializable
-    object MVISampleScreen : AppGraph
+    object HomeScreen : AppGraph
+
+
 
     @Serializable
     object DebugToolsScreen : AppGraph

@@ -31,7 +31,17 @@ Android multi-module template with centralized Gradle convention plugins, shared
 
 - LeakCanary is enabled in `debug` app builds to detect memory leaks.
 - Chucker is enabled in `debug` network stack (module `data:retrofit`) to inspect HTTP traffic on-device.
-- A Debug Tools route is available from `MVVM Sample` in debug builds to quickly validate Couchbase + OpenDB runtime data.
+- A Debug Tools route is available from `Home Face` in debug builds to quickly validate Couchbase + OpenDB runtime data.
+
+## Startup flow
+
+- App startup now routes through `Splash -> Login -> Home` in `feature:main` navigation.
+- `Login` uses Google Sign-In + Firebase Authentication.
+- `Home` now delegates to `feature:home:main` subnavigation (`face`, `ranking`, `profile`) with bottom navigation.
+- `Face` includes offline/online game mode cards and a `Word Bank` entry route in main navigation.
+- `Profile` owns the sign-out action for returning to login.
+- `Splash` is now minimal (app icon + progress indicator).
+- `AppTheme` defaults to the fixed branded palette (dynamic color disabled by default).
 
 ## Template docs
 

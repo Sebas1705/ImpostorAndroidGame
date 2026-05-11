@@ -9,7 +9,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import es.sebas1705.datastore.GamePreferences
 import es.sebas1705.datastore.SettingsPreferences
+import es.sebas1705.datastore.serializers.GAME_PREFERENCES_FILE_NAME
+import es.sebas1705.datastore.serializers.GameSerializer
 import es.sebas1705.datastore.serializers.SETTINGS_PREFERENCES_FILE_NAME
 import es.sebas1705.datastore.serializers.SettingsSerializer
 import kotlinx.coroutines.CoroutineScope
@@ -38,6 +41,17 @@ object DatastoreDataModule {
     ): DataStore<SettingsPreferences> = MultiProcessDataStoreFactory.create(
         serializer = SettingsSerializer(),
         produceFile = { context.dataStoreFile(SETTINGS_PREFERENCES_FILE_NAME) },
+        corruptionHandler = null,
+        scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    )
+
+    @Provides
+    @Singleton
+    fun provideGamePreferencesDataStore(
+        @ApplicationContext context: Context
+    ): DataStore<GamePreferences> = MultiProcessDataStoreFactory.create(
+        serializer = GameSerializer(),
+        produceFile = { context.dataStoreFile(GAME_PREFERENCES_FILE_NAME) },
         corruptionHandler = null,
         scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     )

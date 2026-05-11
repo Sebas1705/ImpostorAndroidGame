@@ -2,6 +2,7 @@ package es.sebas1705.mappers
 
 import es.sebas1705.common.theme.ThemeContrast
 import es.sebas1705.datastore.model.SettingsData
+import es.sebas1705.models.AppLanguage
 import es.sebas1705.models.SettingsModel
 
 /**
@@ -15,6 +16,7 @@ fun SettingsData.toModel() = SettingsModel(
     musicVolume = musicVolume,
     soundVolume = soundVolume,
     appContrast = ThemeContrast.entries[appContrast],
+    appLanguage = AppLanguage.fromCode(appLanguage),
 )
 
 /**
@@ -28,5 +30,6 @@ fun SettingsModel.toData() = SettingsData(
     musicVolume = musicVolume,
     soundVolume = soundVolume,
     appContrast = appContrast.ordinal,
-    defaultSet = true
+    defaultSet = true,
+    appLanguage = appLanguage.code,
 )

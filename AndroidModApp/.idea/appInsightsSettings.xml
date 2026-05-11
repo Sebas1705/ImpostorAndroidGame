@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="es.sebas1705.impostorandroidgame.dev.debug" />
+                  <option name="mobileSdkAppId" value="1:421126265133:android:29ac9c9b7d8263f4ae9ba4" />
+                  <option name="projectId" value="impostor-1b6c2" />
+                  <option name="projectNumber" value="421126265133" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

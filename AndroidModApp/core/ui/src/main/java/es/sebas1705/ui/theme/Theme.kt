@@ -1,14 +1,18 @@
 package es.sebas1705.ui.theme
 
 import android.app.Activity
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import es.sebas1705.common.theme.ThemeContrast
@@ -246,6 +250,7 @@ private val highContrastDarkColorScheme = darkColorScheme(
  * Custom theme for the app.
  *
  * @param darkTheme whether the theme should be dark or light.
+ * @param dynamicColor whether to use system dynamic colors on Android 12+.
  * @param themeContrast the contrast level of the theme.
  * @param content the content of the theme.
  *
@@ -256,23 +261,30 @@ private val highContrastDarkColorScheme = darkColorScheme(
 fun AppTheme(
     modifier: Modifier = Modifier,
     darkTheme: Boolean = isSystemInDarkTheme(),
+    dynamicColor: Boolean = false,
     themeContrast: ThemeContrast = ThemeContrast.Low,
     content: @Composable () -> Unit
 ) {
-    val colors = when (themeContrast) {
-        ThemeContrast.Low -> when {
-            darkTheme -> lowContrastDarkScheme
-            else -> lowContrastLightScheme
-        }
+    val context = LocalContext.current
+    val shouldUseDynamicColor = dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val colors = if (shouldUseDynamicColor) {
+        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    } else {
+        when (themeContrast) {
+            ThemeContrast.Low -> when {
+                darkTheme -> lowContrastDarkScheme
+                else -> lowContrastLightScheme
+            }
 
-        ThemeContrast.Medium -> when {
-            darkTheme -> mediumContrastDarkColorScheme
-            else -> mediumContrastLightColorScheme
-        }
+            ThemeContrast.Medium -> when {
+                darkTheme -> mediumContrastDarkColorScheme
+                else -> mediumContrastLightColorScheme
+            }
 
-        ThemeContrast.High -> when {
-            darkTheme -> highContrastDarkColorScheme
-            else -> highContrastLightColorScheme
+            ThemeContrast.High -> when {
+                darkTheme -> highContrastDarkColorScheme
+                else -> highContrastLightColorScheme
+            }
         }
     }
     val view = LocalView.current

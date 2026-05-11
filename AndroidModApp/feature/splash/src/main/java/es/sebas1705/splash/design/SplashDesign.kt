@@ -1,23 +1,20 @@
 package es.sebas1705.splash.design
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import es.sebas1705.common.utlis.UiModePreviews
+import es.sebas1705.splash.components.SplashBrandingLogo
+import es.sebas1705.splash.models.SplashBrandingData
 import es.sebas1705.ui.theme.AppTheme
-import es.sebas1705.ui.theme.Paddings.SmallPadding
 
 /**
  * Splash screen design of the app
@@ -27,22 +24,21 @@ import es.sebas1705.ui.theme.Paddings.SmallPadding
  */
 @Composable
 fun SplashDesign(modifier: Modifier = Modifier) {
+    val branding = SplashBrandingData(
+        logoDrawableRes = es.sebas1705.core.resources.R.drawable.core_resources_ic_app_logo,
+        logoContentDescriptionRes = es.sebas1705.core.resources.R.string.core_resources_icon_content
+    )
+
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(6.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(es.sebas1705.core.resources.R.drawable.core_resources_ic_android_black_24dp),
-            contentDescription = stringResource(es.sebas1705.core.resources.R.string.core_resources_app_name),
-            modifier = Modifier
-                .fillMaxWidth(0.7f)
-                .fillMaxHeight(0.4f)
-        )
-        Spacer(Modifier.height(SmallPadding))
-        Text(stringResource(es.sebas1705.core.resources.R.string.core_resources_app_name))
-        Spacer(Modifier.height(SmallPadding))
-        LinearProgressIndicator()
+        SplashBrandingLogo(data = branding)
+        LinearProgressIndicator(modifier = Modifier.padding(top = 6.dp))
     }
 }
 

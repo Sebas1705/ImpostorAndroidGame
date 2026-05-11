@@ -5,5 +5,6 @@ data class SettingsData(
     val musicVolume: Float,
     val soundVolume: Float,
     val appContrast: Int,
-    val defaultSet: Boolean
+    val defaultSet: Boolean,
+    val appLanguage: String,
 )

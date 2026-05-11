@@ -18,10 +18,10 @@ if (secretsPropertiesFile.exists())
 else throw FileNotFoundException("Secrets file not found. Please create a secrets.properties file in the app directory.")
 
 android {
-    namespace = "es.sebas1705.androidmodapp"
+    namespace = "es.sebas1705.impostorandroidgame"
 
     defaultConfig {
-        applicationId = "es.sebas1705.androidmodapp"
+        applicationId = "es.sebas1705.impostorandroidgame"
         versionCode = 1
         versionName = "0.1.0"
 

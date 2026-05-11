@@ -4,7 +4,9 @@ import es.sebas1705.authentication.datasources.EmailAuthDataSource
 import es.sebas1705.authentication.datasources.GoogleAuthDataSource
 import es.sebas1705.authentication.datasources.UserAuthDataSource
 import es.sebas1705.common.utlis.alias.FlowResponseNothing
+import es.sebas1705.datastore.datasources.SettingsPreferencesDataSource
 import es.sebas1705.repositories.interfaces.IAuthenticationRepository
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 /**
@@ -20,7 +22,8 @@ import javax.inject.Inject
 class AuthenticationRepository @Inject constructor(
     private val emailAuthDataSource: EmailAuthDataSource,
     private val googleAuthDataSource: GoogleAuthDataSource,
-    private val userAuthDataSource: UserAuthDataSource
+    private val userAuthDataSource: UserAuthDataSource,
+    private val settingsPreferencesDataSource: SettingsPreferencesDataSource,
 ) : IAuthenticationRepository {
 
     //Tasks:
@@ -44,4 +47,11 @@ class AuthenticationRepository @Inject constructor(
     //Functions:
     override fun signOut(): Boolean = userAuthDataSource.signOut()
     override fun isUserLogged(): Boolean = userAuthDataSource.isUserLogged()
+
+    override suspend fun isSessionExpected(): Boolean =
+        settingsPreferencesDataSource.getAuthSessionExpected().first()
+
+    override suspend fun setSessionExpected(value: Boolean) {
+        settingsPreferencesDataSource.saveAuthSessionExpected(value)
+    }
 }

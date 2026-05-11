@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
+import androidx.credentials.exceptions.NoCredentialException
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -17,6 +18,7 @@ import es.sebas1705.common.responses.ErrorResponseType
 import es.sebas1705.common.responses.ResponseState
 import es.sebas1705.common.utlis.alias.FlowResponseNothing
 import es.sebas1705.common.utlis.extensions.types.logE
+import es.sebas1705.common.utlis.extensions.types.logI
 import javax.inject.Inject
 
 /**
@@ -64,19 +66,22 @@ class GoogleAuthDataSource @Inject constructor(
                 context,
                 context.getCredentialRequestGoogle
             ).credential
+        } catch (e: NoCredentialException) {
+            logE("No credentials available: ${e.message}")
+            error = SettingsAuth.ERROR_NO_CREDENTIALS
         } catch (e: Exception) {
             logE("Error getting google credential: ${e.message}")
             error = e.message ?: SettingsAuth.ERROR_GENERIC_MESSAGE_FAIL
         }
         return taskFlowManager.taskFlowProducer(
             assertChecker = {
-                if (credential == null) error
-                else if (
-                    credential is CustomCredential &&
-                    credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
-                )
-                    null
-                else SettingsAuth.WRONG_CREDENTIALS
+                when (credential) {
+                    null -> error
+                    is CustomCredential if credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+                        -> null
+
+                    else -> SettingsAuth.WRONG_CREDENTIALS
+                }
             },
             taskAction = {
                 val googleIdTokenCredential =
@@ -86,7 +91,10 @@ class GoogleAuthDataSource @Inject constructor(
                 firebaseAuth.signInWithCredential(authCredential)
             },
             onSuccessListener = {
-                if (it.user != null) ResponseState.EmptySuccess
+                if (it.user != null) {
+                    logI("Google auth success. Firebase uid=${maskUid(it.user!!.uid)}")
+                    ResponseState.EmptySuccess
+                }
                 else taskFlowManager.createResponse(
                     ErrorResponseType.INTERNAL,
                     SettingsAuth.NOT_LOGGED_USER
@@ -94,4 +102,7 @@ class GoogleAuthDataSource @Inject constructor(
             }
         )
     }
+
+    private fun maskUid(uid: String): String =
+        if (uid.length <= 6) uid else "${uid.take(3)}...${uid.takeLast(3)}"
 }

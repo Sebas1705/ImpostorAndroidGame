@@ -1,6 +1,7 @@
 package es.sebas1705.main.viewmodel
 
 import es.sebas1705.common.mvi.MVIBaseState
+import es.sebas1705.models.AppLanguage
 
 /**
  * Data class that represents the state of the Main Screen.
@@ -13,4 +14,6 @@ import es.sebas1705.common.mvi.MVIBaseState
  */
 data class MainState(
     val splashFinished: Boolean = false,
+    val isUserLogged: Boolean = false,
+    val appLanguage: AppLanguage = AppLanguage.English,
 ) : MVIBaseState

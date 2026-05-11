@@ -2,15 +2,15 @@
 
 Copy-ready architecture recipes based on existing code.
 
-## Recipe A: New MVVM Screen with Existing Domain Use Case
+## Recipe A: New MVI Screen with Existing Domain Use Case
 
-1. Create/extend ViewModel in `feature/<module>/...` using `MVVMBaseViewModel`.
+1. Create/extend ViewModel in `feature/<module>/...` using `MVIBaseViewModel`.
 2. Inject use case from `domain`.
-3. Expose immutable state (`asStateFlow()`).
+3. Expose immutable `uiState` with state + intent pair.
 4. Keep IO work inside `execute(Dispatchers.IO)`.
-5. Handle errors with `stopAndError(...)`.
+5. Route events through intents only.
 
-Reference: `feature/mvvmsample/.../MvvmSampleViewModel.kt`
+Reference: `feature/home/face/.../FaceViewModel.kt`
 
 ## Recipe B: New MVI Screen Intent Handling
 

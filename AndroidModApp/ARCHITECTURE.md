@@ -28,7 +28,8 @@ High-level architecture snapshot for AndroidNativeBase.
 
 - LeakCanary in app debug variant.
 - Chucker in retrofit debug variant.
-- In-app debug tools route in `feature:main` for runtime checks.
+- In-app debug diagnostics in `feature:debug`, launched from `feature:main` navigation.
+- Full-screen app settings dialog in `feature:settings`, available globally via `feature:main`.
 
 ## Detailed Replication Guides
 

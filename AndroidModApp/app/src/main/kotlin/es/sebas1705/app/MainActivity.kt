@@ -9,7 +9,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
-import es.sebas1705.androidmodapp.BuildConfig
 import es.sebas1705.common.utlis.extensions.types.logI
 import es.sebas1705.main.AppNav
 import es.sebas1705.ui.theme.AppTheme
@@ -46,7 +45,7 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             AppTheme {
-                AppNav(isDebugBuild = BuildConfig.DEBUG)
+                AppNav()
             }
         }
     }

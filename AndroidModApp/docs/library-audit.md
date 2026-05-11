@@ -30,7 +30,7 @@ For Couchbase Lite on Android there is no equivalent to "open SQLite in Android 
 
 Practical options:
 
-1. In-app debug inspector (implemented in `feature:mvvmsample`)
+1. In-app debug inspector (implemented in `feature:main` debug tools)
    - Refresh all docs and show them on screen.
    - Insert demo docs to verify writes quickly.
 2. Sync to backend and inspect from server tooling
@@ -40,7 +40,7 @@ Practical options:
 
 ## What was implemented now
 
-- Runtime Couchbase inspection in the MVVM sample screen.
+- Runtime Couchbase inspection in the debug tools screen.
 - Debug tools route (`feature:main`) to refresh diagnostics for Couchbase + OpenDB.
 - Chucker-backed OkHttp wiring via build variants in `data:retrofit`.
 - LeakCanary in app debug builds.

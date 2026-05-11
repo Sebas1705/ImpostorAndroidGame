@@ -82,6 +82,7 @@ lottie = "6.7.1"          # Lottie animations
 couchbase = "4.0.3"       # Couchbase Lite for local NoSQL
 leakcanary = "2.14"
 chucker = "4.2.0"
+kotlinxCollectionsImmutable = "0.4.0"
 
 # Testing versions (kept stable to ensure test reliability)
 espresso-core = "3.7.0"
@@ -223,6 +224,7 @@ couchbase = { group = "com.couchbase.lite", name = "couchbase-lite-android", ver
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 chucker-library = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-library-no-op = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 
 # ---------------------------
 # Testing libraries

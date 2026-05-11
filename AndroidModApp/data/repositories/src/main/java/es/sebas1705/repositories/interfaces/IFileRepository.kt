@@ -1,6 +1,7 @@
 package es.sebas1705.repositories.interfaces
 
 import es.sebas1705.files.json.MyJson
+import es.sebas1705.files.json.DefaultGameWordAssetEntry
 
 /**
  * Repository interface to write and read data from the files
@@ -19,5 +20,7 @@ interface IFileRepository {
      * @author Sebas1705 01/03/2025
      */
     suspend fun readJsonFile(): MyJson
+
+    suspend fun readDefaultGameWords(): List<DefaultGameWordAssetEntry>
 
 }

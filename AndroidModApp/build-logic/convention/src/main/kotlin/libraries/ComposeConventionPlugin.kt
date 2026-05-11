@@ -25,6 +25,7 @@ class ComposeConventionPlugin : Plugin<Project> {
                 implementation(libs.findLibrary("ui-tooling").get())
                 implementation(libs.findLibrary("ui-tooling-preview").get())
                 implementation(libs.findLibrary("ui-text-google-fonts").get())
+                implementation(libs.findLibrary("kotlinx-collections-immutable").get())
             }
         }
     }

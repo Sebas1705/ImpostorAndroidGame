@@ -9,6 +9,7 @@ import es.sebas1705.common.managers.ClassLogData
 import es.sebas1705.common.managers.TaskFlowManager
 import es.sebas1705.common.responses.ResponseState
 import es.sebas1705.common.utlis.alias.FlowResponseNothing
+import es.sebas1705.common.utlis.extensions.types.logI
 import javax.inject.Inject
 
 /**
@@ -48,11 +49,23 @@ class UserAuthDataSource @Inject constructor(
 
     //Functions:
     fun signOut(): Boolean {
+        logI("Signing out Firebase user")
         firebaseAuth.signOut()
-        return firebaseAuth.currentUser == null
+        val isSignedOut = firebaseAuth.currentUser == null
+        logI("Sign out completed. currentUser is null=$isSignedOut")
+        return isSignedOut
     }
 
-    fun isUserLogged(): Boolean = firebaseAuth.currentUser != null
+    fun isUserLogged(): Boolean {
+        val currentUser = firebaseAuth.currentUser
+        logI(
+            "Session check. currentUser=${if (currentUser == null) "null" else maskUid(currentUser.uid)}"
+        )
+        return currentUser != null
+    }
 
     fun getCurrentUser(): FirebaseUser? = firebaseAuth.currentUser
+
+    private fun maskUid(uid: String): String =
+        if (uid.length <= 6) uid else "${uid.take(3)}...${uid.takeLast(3)}"
 }

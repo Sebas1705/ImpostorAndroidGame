@@ -9,4 +9,6 @@ message SettingsPreferences {
     float soundVolume = 3;
     int32 contrast = 4;
     bool defaultSet = 5;
+    bool authSessionExpected = 6;
+    string appLanguage = 7;
 }

@@ -9,7 +9,10 @@ import es.sebas1705.repositories.interfaces.IAuthenticationRepository
 import es.sebas1705.repositories.interfaces.IDatabaseRepository
 import es.sebas1705.repositories.interfaces.IFileRepository
 import es.sebas1705.repositories.interfaces.IFirestoreRepository
+import es.sebas1705.repositories.interfaces.IGameRepository
+import es.sebas1705.repositories.interfaces.IGameWordRepository
 import es.sebas1705.repositories.interfaces.IMyDocRepository
+import es.sebas1705.repositories.interfaces.IOfflineRankingRepository
 import es.sebas1705.repositories.interfaces.IOpendbRepository
 import es.sebas1705.repositories.interfaces.IRealtimeRepository
 import es.sebas1705.repositories.interfaces.ISettingsRepository
@@ -18,7 +21,10 @@ import es.sebas1705.repositories.repos.AuthenticationRepository
 import es.sebas1705.repositories.repos.DatabaseRepository
 import es.sebas1705.repositories.repos.FileRepository
 import es.sebas1705.repositories.repos.FirestoreRepository
+import es.sebas1705.repositories.repos.GameRepository
+import es.sebas1705.repositories.repos.GameWordRepository
 import es.sebas1705.repositories.repos.MyDocRepository
+import es.sebas1705.repositories.repos.OfflineRankingRepository
 import es.sebas1705.repositories.repos.OpendbRepository
 import es.sebas1705.repositories.repos.RealtimeRepository
 import es.sebas1705.repositories.repos.SettingsRepository
@@ -32,6 +38,7 @@ import javax.inject.Singleton
  */
 @Module
 @InstallIn(SingletonComponent::class)
+@Suppress("TooManyFunctions")
 abstract class RepositoriesDataModule {
 
     /**
@@ -167,5 +174,23 @@ abstract class RepositoriesDataModule {
     abstract fun bindSettingsRepository(
         impl: SettingsRepository
     ): ISettingsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindGameRepository(
+        impl: GameRepository
+    ): IGameRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindGameWordRepository(
+        impl: GameWordRepository
+    ): IGameWordRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindOfflineRankingRepository(
+        impl: OfflineRankingRepository
+    ): IOfflineRankingRepository
 
 }

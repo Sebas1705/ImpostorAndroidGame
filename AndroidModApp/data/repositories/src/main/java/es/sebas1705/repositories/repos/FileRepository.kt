@@ -1,6 +1,7 @@
 package es.sebas1705.repositories.repos
 
 import es.sebas1705.files.datasource.MyJsonFileDataSource
+import es.sebas1705.files.json.DefaultGameWordAssetEntry
 import es.sebas1705.files.json.MyJson
 import es.sebas1705.repositories.interfaces.IFileRepository
 import javax.inject.Inject
@@ -19,5 +20,8 @@ class FileRepository @Inject constructor(
 
     override suspend fun readJsonFile(): MyJson =
         myJsonFileDataSource.readJsonFile()
+
+    override suspend fun readDefaultGameWords(): List<DefaultGameWordAssetEntry> =
+        myJsonFileDataSource.readDefaultGameWords()
 
 }

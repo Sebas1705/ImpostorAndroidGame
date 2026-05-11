@@ -9,12 +9,12 @@ android {
 
     sourceSets {
         named("debug") {
-            java.srcDir("build/generated/source/proto/debug/java")
-            kotlin.srcDir("build/generated/source/proto/debug/kotlin")
+            java.srcDir("build/generated/sources/proto/debug/java")
+            kotlin.srcDir("build/generated/sources/proto/debug/kotlin")
         }
         named("release") {
-            java.srcDir("build/generated/source/proto/release/java")
-            kotlin.srcDir("build/generated/source/proto/release/kotlin")
+            java.srcDir("build/generated/sources/proto/release/java")
+            kotlin.srcDir("build/generated/sources/proto/release/kotlin")
         }
     }
 }
