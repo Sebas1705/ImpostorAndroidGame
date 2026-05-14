@@ -1,0 +1,504 @@
+package es.sebas1705.home.profile.design
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowDownward
+import androidx.compose.material.icons.outlined.ArrowUpward
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.PrimaryScrollableTabRow
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import es.sebas1705.common.utlis.UiModePreviews
+import es.sebas1705.feature.home.profile.BuildConfig
+import es.sebas1705.home.profile.components.ProfileBannerCard
+import es.sebas1705.home.profile.components.ProfileRowCard
+import es.sebas1705.home.profile.models.OfflineProfileRecordRowUi
+import es.sebas1705.home.profile.viewmodel.ProfileOfflineRecordSort
+import es.sebas1705.home.profile.viewmodel.ProfileOfflineRecordSortColumn
+import es.sebas1705.home.profile.viewmodel.ProfileRolePreference
+import es.sebas1705.home.profile.viewmodel.ProfileSortDirection
+import es.sebas1705.home.profile.viewmodel.ProfileTab
+import es.sebas1705.models.Categories
+import es.sebas1705.ui.adaptive.LocalForceCompactTables
+import es.sebas1705.ui.adaptive.TableSortAnimation
+import es.sebas1705.ui.theme.AppTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import es.sebas1705.core.resources.R as ResourceR
+
+@Composable
+@Suppress("LongMethod", "LongParameterList", "CyclomaticComplexMethod")
+fun ProfileDesign(
+    modifier: Modifier = Modifier,
+    selectedTab: ProfileTab = ProfileTab.OfflineRecord,
+    isLoadingOfflineRecords: Boolean = false,
+    offlineRecordRows: ImmutableList<OfflineProfileRecordRowUi> = persistentListOf(),
+    offlineRecordSort: ProfileOfflineRecordSort = ProfileOfflineRecordSort(),
+    rolePreference: ProfileRolePreference = ProfileRolePreference.ImpostorHunter,
+    favoriteCategory: Categories? = null,
+    matchesPlayed: Int = 0,
+    currentStreak: Int = 0,
+    bestStreak: Int = 0,
+    errorMessage: String? = null,
+    onSelectTab: (ProfileTab) -> Unit = {},
+    onToggleOfflineRecordSort: (ProfileOfflineRecordSortColumn) -> Unit = {},
+    onSignOut: () -> Unit = {},
+    onDebugNav: () -> Unit = {}
+) {
+    val forceCompactTables = LocalForceCompactTables.current
+    val isCompactPhone = forceCompactTables || LocalConfiguration.current.screenWidthDp < 420
+    val isVeryCompactPhone = forceCompactTables || LocalConfiguration.current.screenWidthDp < 360
+    val tableScrollState = rememberScrollState()
+    val tabEdgePadding = if (isCompactPhone) 4.dp else 12.dp
+
+    val tabs = listOf(
+        ProfileTab.OfflineRecord to stringResource(ResourceR.string.core_resources_profile_tab_offline_record),
+        ProfileTab.Online to stringResource(ResourceR.string.core_resources_profile_tab_online),
+        ProfileTab.Data to stringResource(ResourceR.string.core_resources_profile_tab_data)
+    )
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item(contentType = "contentType1") {
+                ProfileBannerCard()
+            }
+            item(contentType = "contentType2") {
+                Text(
+                    text = stringResource(ResourceR.string.core_resources_profile_title),
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+            item(contentType = "contentType3") {
+                Text(
+                    text = stringResource(ResourceR.string.core_resources_profile_subtitle),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            item(contentType = "contentType4") {
+                PrimaryScrollableTabRow(
+                    selectedTabIndex = tabs.indexOfFirst { it.first == selectedTab },
+                    edgePadding = tabEdgePadding
+                ) {
+                    tabs.forEach { (tab, label) ->
+                        Tab(
+                            selected = selectedTab == tab,
+                            onClick = { onSelectTab(tab) },
+                            text = {
+                                Text(
+                                    text = label,
+                                    style = if (isVeryCompactPhone) {
+                                        MaterialTheme.typography.labelMedium
+                                    } else {
+                                        MaterialTheme.typography.titleSmall
+                                    },
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        )
+                    }
+                }
+            }
+
+            when (selectedTab) {
+                ProfileTab.OfflineRecord -> {
+                    if (isLoadingOfflineRecords) {
+                        item(contentType = "contentType5") {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+                    } else if (offlineRecordRows.isEmpty()) {
+                        item(contentType = "contentType6") {
+                            Text(
+                                text = stringResource(ResourceR.string.core_resources_profile_offline_empty),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
+                    } else {
+                        item(contentType = "contentType7") {
+                            ProfileOfflineRecordHeader(
+                                scrollState = tableScrollState,
+                                currentSort = offlineRecordSort,
+                                onSortBy = onToggleOfflineRecordSort
+                            )
+                        }
+                        items(
+                            items = offlineRecordRows,
+                            key = { row -> row.playerName },
+                            contentType = { _ -> "contentType8" }
+                        ) { row ->
+                            ProfileOfflineRecordRow(
+                                row = row,
+                                scrollState = tableScrollState,
+                                textStyle = if (isVeryCompactPhone) {
+                                    MaterialTheme.typography.bodySmall
+                                } else {
+                                    MaterialTheme.typography.bodyMedium
+                                }
+                            )
+                        }
+                    }
+                }
+
+                ProfileTab.Online -> {
+                    item(contentType = "contentType9") {
+                        Text(
+                            text = stringResource(ResourceR.string.core_resources_profile_online_pending),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
+
+                ProfileTab.Data -> {
+                    item(contentType = "contentType10") {
+                        val rolePreferenceLabel = when (rolePreference) {
+                            ProfileRolePreference.ImpostorHunter ->
+                                stringResource(ResourceR.string.core_resources_profile_role_impostor_hunter)
+
+                            ProfileRolePreference.ImpostorSpecialist ->
+                                stringResource(ResourceR.string.core_resources_profile_role_impostor_specialist)
+                        }
+
+                        ProfileRowCard(
+                            value = stringResource(
+                                ResourceR.string.core_resources_profile_row_role_preference,
+                                rolePreferenceLabel
+                            )
+                        )
+                    }
+                    item(contentType = "contentType11") {
+                        val favoriteCategoryLabel = favoriteCategory?.displayName
+                            ?: stringResource(ResourceR.string.core_resources_debug_no_data)
+
+                        ProfileRowCard(
+                            value = stringResource(
+                                ResourceR.string.core_resources_profile_row_favorite_category,
+                                favoriteCategoryLabel
+                            )
+                        )
+                    }
+                    item(contentType = "contentType12") {
+                        ProfileRowCard(
+                            value = stringResource(
+                                ResourceR.string.core_resources_profile_row_matches_played,
+                                matchesPlayed
+                            )
+                        )
+                    }
+                    item(contentType = "contentType13") {
+                        ProfileRowCard(
+                            value = stringResource(
+                                ResourceR.string.core_resources_profile_row_current_streak,
+                                currentStreak
+                            )
+                        )
+                    }
+                    item(contentType = "contentType14") {
+                        ProfileRowCard(
+                            value = stringResource(
+                                ResourceR.string.core_resources_profile_row_best_streak,
+                                bestStreak
+                            )
+                        )
+                    }
+                }
+            }
+
+            item(contentType = "contentType15") {
+                Button(onClick = onSignOut, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(ResourceR.string.core_resources_settings_sign_out))
+                }
+            }
+            if (!errorMessage.isNullOrBlank()) {
+                item(contentType = "contentType16") {
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+            if(BuildConfig.DEBUG) item(contentType = "contentType17") {
+                OutlinedButton(
+                    onClick = onDebugNav,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(ResourceR.string.core_resources_settings_open_debug_tools))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProfileOfflineRecordHeader(
+    scrollState: androidx.compose.foundation.ScrollState,
+    currentSort: ProfileOfflineRecordSort = ProfileOfflineRecordSort(),
+    onSortBy: (ProfileOfflineRecordSortColumn) -> Unit = {}
+) {
+    ProfileOfflineRecordCells(
+        position = stringResource(ResourceR.string.core_resources_ranking_col_position),
+        player = stringResource(ResourceR.string.core_resources_ranking_col_player),
+        civilianWins = stringResource(ResourceR.string.core_resources_ranking_col_civilian_wins),
+        impostorWins = stringResource(ResourceR.string.core_resources_ranking_col_impostor_wins),
+        totalWins = stringResource(ResourceR.string.core_resources_ranking_col_total),
+        currentStreak = stringResource(ResourceR.string.core_resources_profile_col_current_streak),
+        textStyle = MaterialTheme.typography.titleSmall,
+        scrollState = scrollState,
+        isHeader = true,
+        currentSort = currentSort,
+        onSortBy = onSortBy
+    )
+}
+
+@Composable
+private fun ProfileOfflineRecordRow(
+    row: OfflineProfileRecordRowUi,
+    scrollState: androidx.compose.foundation.ScrollState,
+    textStyle: TextStyle
+) {
+    ProfileOfflineRecordCells(
+        position = row.position.toString(),
+        player = row.playerName,
+        civilianWins = row.civilianWins.toString(),
+        impostorWins = row.impostorWins.toString(),
+        totalWins = row.totalWins.toString(),
+        currentStreak = row.currentStreak.toString(),
+        textStyle = textStyle,
+        scrollState = scrollState
+    )
+}
+
+@Composable
+@Suppress("LongMethod", "LongParameterList")
+private fun ProfileOfflineRecordCells(
+    position: String,
+    player: String,
+    civilianWins: String,
+    impostorWins: String,
+    totalWins: String,
+    currentStreak: String,
+    textStyle: TextStyle,
+    scrollState: androidx.compose.foundation.ScrollState,
+    isHeader: Boolean = false,
+    currentSort: ProfileOfflineRecordSort = ProfileOfflineRecordSort(),
+    onSortBy: (ProfileOfflineRecordSortColumn) -> Unit = {}
+) {
+    val cellModifier = remember {
+        Modifier.width(92.dp)
+    }
+    Row(
+        modifier = Modifier
+            .then(
+                if (isHeader) {
+                    Modifier.background(MaterialTheme.colorScheme.background)
+                } else {
+                    Modifier
+                }
+            )
+            .horizontalScroll(scrollState)
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+                ProfileTableCell(
+                    text = position,
+                    style = textStyle,
+                    modifier = Modifier.width(44.dp),
+                    isHeader = isHeader,
+                    sortDirection = currentSort.direction.takeIf {
+                        isHeader && currentSort.column == ProfileOfflineRecordSortColumn.Position
+                    },
+                    onClick = { onSortBy(ProfileOfflineRecordSortColumn.Position) }
+                )
+                ProfileTableCell(
+                    text = player,
+                    style = textStyle,
+                    modifier = Modifier.width(140.dp),
+                    isHeader = isHeader,
+                    sortDirection = currentSort.direction.takeIf {
+                        isHeader && currentSort.column == ProfileOfflineRecordSortColumn.Player
+                    },
+                    onClick = { onSortBy(ProfileOfflineRecordSortColumn.Player) }
+                )
+                ProfileTableCell(
+                    text = civilianWins,
+                    style = textStyle,
+                    modifier = cellModifier,
+                    isHeader = isHeader,
+                    sortDirection = currentSort.direction.takeIf {
+                        isHeader && currentSort.column == ProfileOfflineRecordSortColumn.CivilianWins
+                    },
+                    onClick = { onSortBy(ProfileOfflineRecordSortColumn.CivilianWins) }
+                )
+                ProfileTableCell(
+                    text = impostorWins,
+                    style = textStyle,
+                    modifier = cellModifier,
+                    isHeader = isHeader,
+                    sortDirection = currentSort.direction.takeIf {
+                        isHeader && currentSort.column == ProfileOfflineRecordSortColumn.ImpostorWins
+                    },
+                    onClick = { onSortBy(ProfileOfflineRecordSortColumn.ImpostorWins) }
+                )
+                ProfileTableCell(
+                    text = totalWins,
+                    style = textStyle,
+                    modifier = cellModifier,
+                    isHeader = isHeader,
+                    sortDirection = currentSort.direction.takeIf {
+                        isHeader && currentSort.column == ProfileOfflineRecordSortColumn.TotalWins
+                    },
+                    onClick = { onSortBy(ProfileOfflineRecordSortColumn.TotalWins) }
+                )
+                ProfileTableCell(
+                    text = currentStreak,
+                    style = textStyle,
+                    modifier = cellModifier,
+                    isHeader = isHeader,
+                    sortDirection = currentSort.direction.takeIf {
+                        isHeader && currentSort.column == ProfileOfflineRecordSortColumn.CurrentStreak
+                    },
+                    onClick = { onSortBy(ProfileOfflineRecordSortColumn.CurrentStreak) }
+                )
+    }
+}
+
+        @Composable
+        @Suppress("LongMethod")
+        private fun ProfileTableCell(
+            text: String,
+            style: TextStyle,
+            modifier: Modifier,
+            isHeader: Boolean,
+            sortDirection: ProfileSortDirection?,
+            onClick: () -> Unit
+        ) {
+            if (!isHeader) {
+                Text(
+                    text = text,
+                    style = style,
+                    modifier = modifier,
+                            color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.Normal
+                )
+                return
+            }
+
+            Row(
+                modifier = modifier.clickable(onClick = onClick),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                        val animatedHeaderColor = animateColorAsState(
+                            targetValue = if (sortDirection != null) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                                            animationSpec = tween(durationMillis = TableSortAnimation.HeaderColorDurationMs),
+                            label = "profileHeaderSortColor"
+                        )
+                Text(
+                    text = text,
+                    style = style,
+                            color = animatedHeaderColor.value,
+                    maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = if (sortDirection != null) {
+                                FontWeight.SemiBold
+                            } else {
+                                FontWeight.Normal
+                            }
+                )
+                AnimatedVisibility(
+                    visible = sortDirection != null,
+                    enter = fadeIn(animationSpec = tween(TableSortAnimation.IconEnterDurationMs)) +
+                        scaleIn(
+                            initialScale = TableSortAnimation.IconScaleCollapsed,
+                            animationSpec = tween(TableSortAnimation.IconEnterDurationMs)
+                        ),
+                    exit = fadeOut(animationSpec = tween(TableSortAnimation.IconExitDurationMs)) +
+                        scaleOut(
+                            targetScale = TableSortAnimation.IconScaleCollapsed,
+                            animationSpec = tween(TableSortAnimation.IconExitDurationMs)
+                        )
+                ) {
+                    Icon(
+                        imageVector = if (sortDirection == ProfileSortDirection.Ascending) {
+                            Icons.Outlined.ArrowUpward
+                        } else {
+                            Icons.Outlined.ArrowDownward
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(12.dp)
+                    )
+                }
+            }
+        }
+
+@UiModePreviews
+@Composable
+private fun Preview() {
+    AppTheme {
+        ProfileDesign()
+    }
+}
+

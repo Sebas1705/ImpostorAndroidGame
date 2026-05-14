@@ -1,0 +1,21 @@
+plugins {
+    id("buildlogic.android.feature")
+}
+
+android {
+    namespace = "es.sebas1705.feature.home.face.nav"
+}
+
+dependencies {
+    api(projects.core.common)
+    api(projects.core.ui)
+    api(projects.core.designsystem)
+    api(projects.core.resources)
+
+    api(projects.feature.home.face.categories)
+    api(projects.feature.home.face.users)
+    api(projects.feature.home.face.mode)
+    api(projects.feature.home.ranking)
+    api(projects.feature.home.profile)
+    implementation(libs.material.icons.extended)
+}
