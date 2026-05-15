@@ -4,6 +4,7 @@ import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import es.sebas1705.common.mvi.MVIBaseViewModel
+import es.sebas1705.common.utlis.extensions.types.logW
 import es.sebas1705.game.settings.UpdateGamePlayersUseCase
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
@@ -24,7 +25,8 @@ class UserViewModel @Inject constructor(
     private fun save(
         intent: UserIntent.Save
     ) = execute(Dispatchers.IO) {
-        updateGamePlayersUseCase(intent.playerNames)
+        runCatching {
+            updateGamePlayersUseCase(intent.playerNames)
+        }.onFailure { logW("save failed: ${it.message}") }
     }
 }
-

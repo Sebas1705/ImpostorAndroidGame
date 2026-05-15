@@ -54,6 +54,7 @@ import es.sebas1705.home.profile.viewmodel.ProfileRolePreference
 import es.sebas1705.home.profile.viewmodel.ProfileSortDirection
 import es.sebas1705.home.profile.viewmodel.ProfileTab
 import es.sebas1705.models.Categories
+import es.sebas1705.models.nameRes
 import es.sebas1705.ui.adaptive.LocalForceCompactTables
 import es.sebas1705.ui.adaptive.TableSortAnimation
 import es.sebas1705.ui.theme.AppTheme
@@ -223,7 +224,7 @@ fun ProfileDesign(
                         )
                     }
                     item(contentType = "contentType11") {
-                        val favoriteCategoryLabel = favoriteCategory?.displayName
+                        val favoriteCategoryLabel = favoriteCategory?.let { stringResource(it.nameRes) }
                             ?: stringResource(ResourceR.string.core_resources_debug_no_data)
 
                         ProfileRowCard(

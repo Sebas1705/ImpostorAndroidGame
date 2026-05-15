@@ -1,4 +1,4 @@
-﻿name: Validation Pipeline
+name: Validation Pipeline
 on:
   push:
     branches: [ main, develop ]
@@ -27,13 +27,32 @@ jobs:
         with:
           filters: |
             android:
-              - 'AndroidModApp/**'
+              - 'app/**'
+              - 'feature/**'
+              - 'core/**'
+              - 'domain/**'
+              - 'data/**'
+              - 'build-logic/**'
+              - 'gradle/**'
+              - 'build.gradle.kts'
+              - 'settings.gradle.kts'
+              - 'gradle.properties'
               - '.github/workflows/validate.yml'
             detekt:
-              - 'AndroidModApp/**'
+              - 'app/**'
+              - 'feature/**'
+              - 'core/**'
+              - 'domain/**'
+              - 'data/**'
+              - 'build-logic/**'
+              - 'config/detekt/**'
               - '.github/workflows/validate.yml'
             tests:
-              - 'AndroidModApp/**'
+              - 'app/**'
+              - 'feature/**'
+              - 'core/**'
+              - 'domain/**'
+              - 'data/**'
               - '.github/workflows/validate.yml'
   build_lint:
     name: Build + Lint
@@ -41,9 +60,6 @@ jobs:
     if: needs.changes.outputs.android == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    defaults:
-      run:
-        working-directory: AndroidModApp
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -56,13 +72,13 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Create placeholder secrets
+      - name: Create secrets file
         run: |
           mkdir -p app
           echo "signing_keystore_password=fake" > app/secrets.properties
           echo "signing_key_alias=fake" >> app/secrets.properties
-          echo "EXAMPLE_URL_DEV=https://dev.example.com" >> app/secrets.properties
-          echo "EXAMPLE_URL_PRO=https://pro.example.com" >> app/secrets.properties
+          echo "EXAMPLE_URL_DEV=${{ secrets.EXAMPLE_URL_DEV || 'https://dev.example.com' }}" >> app/secrets.properties
+          echo "EXAMPLE_URL_PRO=${{ secrets.EXAMPLE_URL_PRO || 'https://pro.example.com' }}" >> app/secrets.properties
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build and Lint
@@ -74,17 +90,14 @@ jobs:
           name: lint-reports
           retention-days: 14
           path: |
-            AndroidModApp/**/build/reports/lint-results*.html
-            AndroidModApp/**/build/reports/lint-results*.xml
+            **/build/reports/lint-results*.html
+            **/build/reports/lint-results*.xml
   detekt:
     name: Detekt
     needs: changes
     if: needs.changes.outputs.detekt == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    defaults:
-      run:
-        working-directory: AndroidModApp
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -97,13 +110,13 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Create placeholder secrets
+      - name: Create secrets file
         run: |
           mkdir -p app
           echo "signing_keystore_password=fake" > app/secrets.properties
           echo "signing_key_alias=fake" >> app/secrets.properties
-          echo "EXAMPLE_URL_DEV=https://dev.example.com" >> app/secrets.properties
-          echo "EXAMPLE_URL_PRO=https://pro.example.com" >> app/secrets.properties
+          echo "EXAMPLE_URL_DEV=${{ secrets.EXAMPLE_URL_DEV || 'https://dev.example.com' }}" >> app/secrets.properties
+          echo "EXAMPLE_URL_PRO=${{ secrets.EXAMPLE_URL_PRO || 'https://pro.example.com' }}" >> app/secrets.properties
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Run Detekt
@@ -115,16 +128,13 @@ jobs:
           name: detekt-reports
           retention-days: 14
           path: |
-            AndroidModApp/**/build/reports/detekt/
+            **/build/reports/detekt/
   unit_tests:
     name: Unit Tests + Coverage
     needs: changes
     if: needs.changes.outputs.tests == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 35
-    defaults:
-      run:
-        working-directory: AndroidModApp
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -137,13 +147,13 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Create placeholder secrets
+      - name: Create secrets file
         run: |
           mkdir -p app
           echo "signing_keystore_password=fake" > app/secrets.properties
           echo "signing_key_alias=fake" >> app/secrets.properties
-          echo "EXAMPLE_URL_DEV=https://dev.example.com" >> app/secrets.properties
-          echo "EXAMPLE_URL_PRO=https://pro.example.com" >> app/secrets.properties
+          echo "EXAMPLE_URL_DEV=${{ secrets.EXAMPLE_URL_DEV || 'https://dev.example.com' }}" >> app/secrets.properties
+          echo "EXAMPLE_URL_PRO=${{ secrets.EXAMPLE_URL_PRO || 'https://pro.example.com' }}" >> app/secrets.properties
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Run Unit Tests and Coverage
@@ -155,5 +165,5 @@ jobs:
           name: test-coverage-reports
           retention-days: 14
           path: |
-            AndroidModApp/**/build/reports/tests/
-            AndroidModApp/**/build/reports/jacoco/
+            **/build/reports/tests/
+            **/build/reports/jacoco/

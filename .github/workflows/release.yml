@@ -1,4 +1,4 @@
-﻿name: Release
+name: Release
 on:
   push:
     tags:
@@ -9,13 +9,20 @@ on:
         description: "Version without prefix, for example 2026.05.1"
         required: true
         type: string
+# A single global release slot: prevents the dispatch-created tag from
+# triggering a second parallel run that races with the dispatch run itself.
+concurrency:
+  group: release-${{ github.workflow }}
+  cancel-in-progress: false
 permissions:
-  contents: write
-  pull-requests: read
+  contents: read
 jobs:
   publish_release:
     name: Publish Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -169,4 +176,3 @@ jobs:
         with:
           tag_name: ${{ steps.tag.outputs.value }}
           body_path: .release-notes.md
-

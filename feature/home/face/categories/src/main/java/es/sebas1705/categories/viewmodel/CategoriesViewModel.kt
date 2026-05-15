@@ -4,6 +4,7 @@ import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import es.sebas1705.common.mvi.MVIBaseViewModel
+import es.sebas1705.common.utlis.extensions.types.logW
 import es.sebas1705.game.settings.UpdateGameSelectedCategoriesUseCase
 import es.sebas1705.models.Categories
 import kotlinx.coroutines.Dispatchers
@@ -27,27 +28,32 @@ class CategoriesViewModel @Inject constructor(
     private fun toggleCategory(
         intent: CategoriesIntent.ToggleCategory
     ) = execute(Dispatchers.IO) {
-        updateGameSelectedCategoriesUseCase(
-            selectedCategories = intent.categoriesStates
-                .mapValues { (category, isSelected) ->
-                    if (category == intent.category) !isSelected else isSelected
-                }
-                .filterValues { it }
-                .keys
-                .toSet()
-        )
+        runCatching {
+            updateGameSelectedCategoriesUseCase(
+                selectedCategories = intent.categoriesStates
+                    .mapValues { (category, isSelected) ->
+                        if (category == intent.category) !isSelected else isSelected
+                    }
+                    .filterValues { it }
+                    .keys
+                    .toSet()
+            )
+        }.onFailure { logW("toggleCategory failed: ${it.message}") }
     }
 
     private fun selectAll() = execute(Dispatchers.IO) {
-        updateGameSelectedCategoriesUseCase(
-            selectedCategories = Categories.entries.toSet()
-        )
+        runCatching {
+            updateGameSelectedCategoriesUseCase(
+                selectedCategories = Categories.entries.toSet()
+            )
+        }.onFailure { logW("selectAll failed: ${it.message}") }
     }
 
     private fun clearAll() = execute(Dispatchers.IO) {
-        updateGameSelectedCategoriesUseCase(
-            selectedCategories = emptySet()
-        )
+        runCatching {
+            updateGameSelectedCategoriesUseCase(
+                selectedCategories = emptySet()
+            )
+        }.onFailure { logW("clearAll failed: ${it.message}") }
     }
 }
-

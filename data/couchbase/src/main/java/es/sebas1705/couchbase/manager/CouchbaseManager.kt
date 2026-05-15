@@ -139,9 +139,9 @@ internal class CouchbaseManager @Inject constructor(
             return null
         }
         val document = database
-            .getCollection(collectionName)!!
-            .getDocument(id)!!
-            .toMap()
+            .getCollection(collectionName)
+            ?.getDocument(id)
+            ?.toMap()
         logResult("get", document)
         document
     } catch (e: Exception) {
@@ -370,8 +370,15 @@ internal class CouchbaseManager @Inject constructor(
                         logResult("registerCollectionListener.callback", changedDocs)
                         listener(changedDocs)
                     } else {
-                        val allDocs = collection.indexes.mapNotNull { docId ->
-                            collection.getDocument(docId)?.toMap()
+                        val allDocs = try {
+                            QueryBuilder.select(SelectResult.all())
+                                .from(DataSource.collection(collection))
+                                .execute()
+                                .allResults()
+                                .mapNotNull { it.getDictionary(collectionName)?.toMap() }
+                        } catch (e: Exception) {
+                            logError("registerCollectionListener.callback query failed: ${e.message}")
+                            emptyList()
                         }
                         logResult("registerCollectionListener.callback", allDocs)
                         listener(allDocs)

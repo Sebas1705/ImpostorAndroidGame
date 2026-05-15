@@ -6,6 +6,7 @@ import es.sebas1705.models.WordModel
 import es.sebas1705.repositories.interfaces.IAppSettingsRepository
 import es.sebas1705.repositories.interfaces.IWordRepository
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 /**
@@ -24,7 +25,8 @@ class SearchWordsUseCase @Inject constructor(
     suspend operator fun invoke(
         categories: Set<Categories>
     ): List<WordModel> {
-        val settings = settingsRepository.read().first()
+        val settings = withTimeoutOrNull(5_000L) { settingsRepository.read().first() }
+            ?: return emptyList()
         val categoryFilters = categories
             .flatMap { category ->
                 // Keep compatibility with legacy docs stored with enum-name categories.

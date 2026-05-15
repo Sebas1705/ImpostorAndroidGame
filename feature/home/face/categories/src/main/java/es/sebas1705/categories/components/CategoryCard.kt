@@ -18,9 +18,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import es.sebas1705.categories.models.toCategoryIcon
 import es.sebas1705.models.Categories
+import es.sebas1705.models.descriptionRes
+import es.sebas1705.models.nameRes
 
 @Composable
 internal fun CategoryCard(
@@ -72,12 +75,12 @@ internal fun CategoryCard(
                 )
             }
             Text(
-                text = category.displayName,
+                text = stringResource(category.nameRes),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = category.description,
+                text = stringResource(category.descriptionRes),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

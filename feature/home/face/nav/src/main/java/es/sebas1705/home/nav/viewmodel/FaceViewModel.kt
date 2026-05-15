@@ -4,6 +4,7 @@ import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import es.sebas1705.common.mvi.MVIBaseViewModel
+import es.sebas1705.common.utlis.extensions.types.logW
 import es.sebas1705.game.settings.ReadGameUseCase
 import es.sebas1705.models.Categories
 import kotlinx.collections.immutable.toImmutableList
@@ -25,18 +26,24 @@ class FaceViewModel @Inject constructor(
         }
 
     private fun load() = execute(Dispatchers.IO) {
-        readGameUseCase().collect { game ->
-            updateUi {
-                it.copy(
-                    categoriesStates = Categories.entries.associateWith { category ->
-                        game.selectedCategories.contains(category)
-                    }.toImmutableMap(),
-                    users = game.players.toImmutableList(),
-                    mode = game.mode,
-                    impostors = game.impostors,
-                    showImpostorsInResult = game.showImpostorsInResult,
-                )
+        runCatching {
+            readGameUseCase().collect { game ->
+                updateUi {
+                    it.copy(
+                        categoriesStates = Categories.entries.associateWith { category ->
+                            game.selectedCategories.contains(category)
+                        }.toImmutableMap(),
+                        users = game.players.toImmutableList(),
+                        mode = game.mode,
+                        impostors = game.impostors,
+                        showImpostorsInResult = game.showImpostorsInResult,
+                        errorMessage = null,
+                    )
+                }
             }
+        }.onFailure { throwable ->
+            logW("load failed: ${throwable.message}")
+            updateUi { it.copy(errorMessage = throwable.message) }
         }
     }
 }

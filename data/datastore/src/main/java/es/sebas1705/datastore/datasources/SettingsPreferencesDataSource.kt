@@ -8,6 +8,7 @@ import es.sebas1705.datastore.config.DefaultValuesDS
 import es.sebas1705.datastore.model.SettingsData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -21,18 +22,20 @@ class SettingsPreferencesDataSource @Inject constructor(
 ) {
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
-            settingsPreferences.updateData {
-                if (it.defaultSet) it
-                else it.toBuilder()
-                    .setContrast(DefaultValuesDS.APP_UI_CONTRAST)
-                    .setFirstTime(DefaultValuesDS.FIRST_TIME)
-                    .setMusicVolume(DefaultValuesDS.MUSIC_VOLUME)
-                    .setSoundVolume(DefaultValuesDS.SOUND_VOLUME)
-                    .setAppLanguage(resolveInitialLanguage())
-                    .setForceCompactTables(DefaultValuesDS.FORCE_COMPACT_TABLES)
-                    .setDefaultSet(true)
-                    .build()
+        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+            runCatching {
+                settingsPreferences.updateData {
+                    if (it.defaultSet) it
+                    else it.toBuilder()
+                        .setContrast(DefaultValuesDS.APP_UI_CONTRAST)
+                        .setFirstTime(DefaultValuesDS.FIRST_TIME)
+                        .setMusicVolume(DefaultValuesDS.MUSIC_VOLUME)
+                        .setSoundVolume(DefaultValuesDS.SOUND_VOLUME)
+                        .setAppLanguage(resolveInitialLanguage())
+                        .setForceCompactTables(DefaultValuesDS.FORCE_COMPACT_TABLES)
+                        .setDefaultSet(true)
+                        .build()
+                }
             }
         }
     }

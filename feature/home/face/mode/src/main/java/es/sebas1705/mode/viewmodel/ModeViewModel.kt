@@ -4,6 +4,7 @@ import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import es.sebas1705.common.mvi.MVIBaseViewModel
+import es.sebas1705.common.utlis.extensions.types.logW
 import es.sebas1705.game.settings.UpdateGameModeUseCase
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
@@ -24,11 +25,12 @@ class ModeViewModel @Inject constructor(
     private fun save(
         intent: ModeIntent.Save
     ) = execute(Dispatchers.IO) {
-        updateGameModeUseCase(
-            intent.mode,
-            intent.impostors,
-            intent.showImpostorsInResult
-        )
+        runCatching {
+            updateGameModeUseCase(
+                intent.mode,
+                intent.impostors,
+                intent.showImpostorsInResult
+            )
+        }.onFailure { logW("save failed: ${it.message}") }
     }
 }
-

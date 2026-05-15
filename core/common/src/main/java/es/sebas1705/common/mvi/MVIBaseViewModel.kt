@@ -42,13 +42,13 @@ abstract class MVIBaseViewModel<S : MVIBaseState, I : MVIBaseIntent>(
 
     private val initialState: S by lazy { initState() }
     protected val _uiState: MutableStateFlow<S> by lazy { MutableStateFlow(initialState) }
-    val uiState
-        get() = _uiState
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000L),
-                initialState
-            )
+    val uiState by lazy {
+        _uiState.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            initialState
+        )
+    }
 
     private val _loading = MutableStateFlow(false)
     val loading

@@ -51,8 +51,9 @@ class MediaPlayerManager @Inject constructor(
 
     fun changeSong(music: Musics) {
         mediaPlayer.reset()
-        val afd = context.resources.openRawResourceFd(music.resourceId)
-        mediaPlayer.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+        context.resources.openRawResourceFd(music.resourceId).use { afd ->
+            mediaPlayer.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+        }
         mediaPlayer.prepare()
         mediaPlayer.start()
     }

@@ -27,8 +27,6 @@ class ProfileViewModel @Inject constructor(
     @ApplicationContext context: Context
 ) : MVIBaseViewModel<ProfileState, ProfileIntent>(context) {
 
-    private val appContext: Context = context
-
     override fun initState(): ProfileState = ProfileState(
         offlineRecordSort = readSavedProfileSort(savedStateHandle)
     )
@@ -144,7 +142,7 @@ class ProfileViewModel @Inject constructor(
             if (isSuccess) {
                 it.copy(navigateToLogin = true, errorMessage = null)
             } else {
-                it.copy(errorMessage = appContext.getString(R.string.core_resources_settings_sign_out_error))
+                it.copy(errorMessage = context.getString(R.string.core_resources_settings_sign_out_error))
             }
         }
     }

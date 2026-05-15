@@ -181,8 +181,9 @@ class OfflineGameViewModel @Inject constructor(
             val correctVotes = if (isImpostor) state.correctVotes + 1 else state.correctVotes
             val incorrectVotes = if (isImpostor) state.incorrectVotes else state.incorrectVotes + 1
             val result = buildResultIfFinished(state, newAlive, correctVotes, incorrectVotes)
+            val playerName = state.players.getOrElse(playerIndex) { "?" }
             logD(
-                "votePlayer processed name=${state.players[playerIndex]} role=${if (isImpostor) "impostor" else "civilian"} " +
+                "votePlayer processed name=$playerName role=${if (isImpostor) "impostor" else "civilian"} " +
                     "aliveAfter=${newAlive.size} correctVotes=$correctVotes incorrectVotes=$incorrectVotes"
             )
 
@@ -191,18 +192,18 @@ class OfflineGameViewModel @Inject constructor(
                     if (isImpostor) {
                         context.getString(
                             R.string.core_resources_game_vote_reveal_impostor,
-                            state.players[playerIndex]
+                            playerName
                         )
                     } else {
                         context.getString(
                             R.string.core_resources_game_vote_reveal_civilian,
-                            state.players[playerIndex]
+                            playerName
                         )
                     }
                 } else {
                     context.getString(
                         R.string.core_resources_game_vote_reveal_neutral,
-                        state.players[playerIndex]
+                        playerName
                     )
                 }
 
@@ -375,12 +376,16 @@ class OfflineGameViewModel @Inject constructor(
         )
 
         execute(Dispatchers.IO) {
-            recordOfflineMatchResultUseCase(
-                allPlayerNames = players.toSet(),
-                civilianWinnerNames = civilianWinnerNames,
-                impostorWinnerNames = impostorWinnerNames
-            )
-            logD("recordRankingForWinner persisted allPlayers=${players.size}")
+            runCatching {
+                recordOfflineMatchResultUseCase(
+                    allPlayerNames = players.toSet(),
+                    civilianWinnerNames = civilianWinnerNames,
+                    impostorWinnerNames = impostorWinnerNames
+                )
+                logD("recordRankingForWinner persisted allPlayers=${players.size}")
+            }.onFailure { throwable ->
+                logW("recordRankingForWinner failed: ${throwable.message}")
+            }
         }
     }
 

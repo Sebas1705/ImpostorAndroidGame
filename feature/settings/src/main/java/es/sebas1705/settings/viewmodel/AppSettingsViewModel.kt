@@ -4,6 +4,7 @@ import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import es.sebas1705.common.mvi.MVIBaseViewModel
+import es.sebas1705.common.utlis.extensions.types.logW
 import es.sebas1705.common.theme.ThemeContrast
 import es.sebas1705.models.AppLanguage
 import es.sebas1705.models.SettingsModel
@@ -54,9 +55,12 @@ class AppSettingsViewModel @Inject constructor(
     private fun persistSettings(
         transform: (SettingsModel) -> SettingsModel
     ) = execute(Dispatchers.IO) {
-        _uiState.value.settings?.let { currentSettings ->
-            updateSettingsUseCase(transform(currentSettings))
+        val currentSettings = _uiState.value.settings
+        if (currentSettings == null) {
+            logW("persistSettings skipped: settings not yet loaded")
+            return@execute
         }
+        updateSettingsUseCase(transform(currentSettings))
     }
 
     private fun resolveInitialLanguage(): AppLanguage {

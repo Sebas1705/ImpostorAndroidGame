@@ -66,6 +66,13 @@ android {
         }
     }
 
+    lint {
+        abortOnError = true
+        warningsAsErrors = false
+        htmlReport = true
+        xmlReport = true
+    }
+
     buildFeatures {
         buildConfig = true
         compose = true
