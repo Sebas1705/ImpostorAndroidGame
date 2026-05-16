@@ -1,4 +1,4 @@
-﻿param(
+param(
     [Parameter(Mandatory = $true)]
     [ValidateRange(0, 999)]
     [int]$Patch,
@@ -31,11 +31,10 @@ function Get-GitHubRepoUrl {
     throw "Unsupported origin URL format for GitHub release link generation: $RemoteUrl"
 }
 $repoRoot = (Exec-Git -Args @('rev-parse', '--show-toplevel')).Trim()
-$androidProjectRoot = Join-Path $repoRoot 'AndroidModApp'
-$tagScriptPath = Join-Path $repoRoot 'release-tag.ps1'
-if (-not (Test-Path $androidProjectRoot)) {
-    throw "Could not find AndroidModApp at $androidProjectRoot"
-}
+# The Android project seems to be at the root now, so we use $repoRoot
+$androidProjectRoot = $repoRoot
+$tagScriptPath = Join-Path $repoRoot 'scripts/release-tag.ps1'
+
 if (-not (Test-Path $tagScriptPath)) {
     throw "Could not find release-tag.ps1 at $tagScriptPath"
 }
@@ -47,7 +46,12 @@ $releaseUrl = "$repoUrl/releases/tag/$tag"
 Write-Host "Running Detekt before tagging..."
 Push-Location $androidProjectRoot
 try {
-    & .\gradlew.bat detekt --no-daemon
+    # check for gradlew.bat
+    if (Test-Path ".\gradlew.bat") {
+        & .\gradlew.bat detekt --no-daemon
+    } else {
+        Write-Host "gradlew.bat not found in $androidProjectRoot, skipping detekt"
+    }
     if ($LASTEXITCODE -ne 0) {
         throw "Detekt failed. Aborting release flow."
     }

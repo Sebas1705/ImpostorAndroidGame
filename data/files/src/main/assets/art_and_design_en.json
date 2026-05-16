@@ -1,0 +1,31 @@
+{
+  "words": [
+    {"word":"Painting","clues":["Picture","Color","Artist","Canvas","Museum"],"category":"art_and_design"},
+    {"word":"Sculpture","clues":["Marble","Statue","Artist","Chisel","3D"],"category":"art_and_design"},
+    {"word":"Drawing","clues":["Pencil","Paper","Lines","Sketch","Hand"],"category":"art_and_design"},
+    {"word":"Museum","clues":["Art","Exhibition","Paintings","Visit","Gallery"],"category":"art_and_design"},
+    {"word":"Paintbrush","clues":["Paint","Bristles","Artist","Color","Tool"],"category":"art_and_design"},
+    {"word":"Canvas","clues":["Painting","Fabric","Paint","Frame","White"],"category":"art_and_design"},
+    {"word":"Architecture","clues":["Buildings","Design","Blueprints","Construction","City"],"category":"art_and_design"},
+    {"word":"Photography","clues":["Camera","Image","Photo","Lens","Digital"],"category":"art_and_design"},
+    {"word":"Graphic Design","clues":["Logo","Computer","Image","Advertising","Visual"],"category":"art_and_design"},
+    {"word":"Palette","clues":["Colors","Painter","Mix","Wood","Hand"],"category":"art_and_design"},
+    {"word":"Sketch","clues":["Drawing","Quick","Idea","Pencil","First"],"category":"art_and_design"},
+    {"word":"Portrait","clues":["Face","Person","Painting","Photo","Model"],"category":"art_and_design"},
+    {"word":"Landscape","clues":["Nature","Painting","View","Mountains","Outside"],"category":"art_and_design"},
+    {"word":"Exhibition","clues":["Museum","Art","Show","Gallery","Public"],"category":"art_and_design"},
+    {"word":"Engraving","clues":["Metal","Paper","Ink","Copy","Art"],"category":"art_and_design"},
+    {"word":"Ceramics","clues":["Mud","Clay","Pottery wheel","Fire","Vessel"],"category":"art_and_design"},
+    {"word":"Abstract","clues":["Shapes","Art","Non-Realistic","Colors","Style"],"category":"art_and_design"},
+    {"word":"Typography","clues":["Letters","Design","Text","Font","Write"],"category":"art_and_design"},
+    {"word":"Color","clues":["Red","Blue","Paint","Rainbow","Visual"],"category":"art_and_design"},
+    {"word":"Masterpiece","clues":["Genius","Best","Famous","Art","Perfect"],"category":"art_and_design"},
+    {"word":"Fresco","clues":["Wall","Painting","Plaster","Italy","Renaissance"],"category":"art_and_design"},
+    {"word":"Collage","clues":["Paper","Glue","Art","Cut","Mixed Media"],"category":"art_and_design"},
+    {"word":"Mosaic","clues":["Tiles","Pattern","Art","Floor","Colorful"],"category":"art_and_design"},
+    {"word":"Graffiti","clues":["Street","Spray Paint","Wall","Urban","Vandalism"],"category":"art_and_design"},
+    {"word":"Impressionism","clues":["Monet","Light","Brushstrokes","France","Art Movement"],"category":"art_and_design"},
+    {"word":"Cubism","clues":["Picasso","Geometric Shapes","Multiple Perspectives","Spain","Art Movement"],"category":"art_and_design"},
+    {"word":"Surrealism","clues":["Dali","Dreams","Unconscious Mind","Strange Images","Art Movement"],"category":"art_and_design"}
+  ]
+}

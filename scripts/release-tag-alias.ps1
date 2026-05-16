@@ -1,4 +1,4 @@
-﻿function New-RepoReleaseTag {
+function New-RepoReleaseTag {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]

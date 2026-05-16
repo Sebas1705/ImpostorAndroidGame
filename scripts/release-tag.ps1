@@ -75,5 +75,3 @@ if ($Push) {
 } else {
     Write-Host "Tag not pushed. Run: git push origin $tag"
 }
-
-
