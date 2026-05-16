@@ -8,4 +8,5 @@ data class SettingsData(
     val defaultSet: Boolean,
     val appLanguage: String,
     val forceCompactTables: Boolean,
+    val darkTheme: Int = 0,
 )

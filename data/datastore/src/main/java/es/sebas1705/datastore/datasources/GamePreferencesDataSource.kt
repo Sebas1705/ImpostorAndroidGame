@@ -35,6 +35,9 @@ class GamePreferencesDataSource @Inject constructor(
                                     impostors = DEFAULT_IMPOSTORS
                                 }
                                 showImpostorsInResult = DEFAULT_SHOW_IMPOSTORS_IN_RESULT
+                                if (it.discussionTimerSeconds <= 0) {
+                                    discussionTimerSeconds = DEFAULT_DISCUSSION_TIMER_SECONDS
+                                }
                                 setDefaultSet(true)
                             }
                             .build()
@@ -50,7 +53,9 @@ class GamePreferencesDataSource @Inject constructor(
             players = it.playersList,
             mode = it.mode,
             impostors = it.impostors,
-            showImpostorsInResult = it.showImpostorsInResult
+            showImpostorsInResult = it.showImpostorsInResult,
+            discussionTimerSeconds = it.discussionTimerSeconds,
+            impostorsKnowEachOther = it.impostorsKnowEachOther,
         )
     }
 
@@ -83,18 +88,24 @@ class GamePreferencesDataSource @Inject constructor(
             .setMode(gameData.mode)
             .setImpostors(gameData.impostors.coerceAtLeast(DEFAULT_IMPOSTORS))
             .setShowImpostorsInResult(gameData.showImpostorsInResult)
+            .setDiscussionTimerSeconds(gameData.discussionTimerSeconds.coerceAtLeast(0))
+            .setImpostorsKnowEachOther(gameData.impostorsKnowEachOther)
             .build()
     }
 
     suspend fun saveMode(
         mode: String,
         impostors: Int,
-        showImpostorsInResult: Boolean
+        showImpostorsInResult: Boolean,
+        discussionTimerSeconds: Int,
+        impostorsKnowEachOther: Boolean,
     ) = gamePreferences.updateData {
         it.toBuilder()
             .setMode(mode)
             .setImpostors(impostors.coerceAtLeast(DEFAULT_IMPOSTORS))
             .setShowImpostorsInResult(showImpostorsInResult)
+            .setDiscussionTimerSeconds(discussionTimerSeconds.coerceAtLeast(0))
+            .setImpostorsKnowEachOther(impostorsKnowEachOther)
             .build()
     }
 
@@ -106,5 +117,6 @@ class GamePreferencesDataSource @Inject constructor(
         const val DEFAULT_MODE = "Classic"
         const val DEFAULT_IMPOSTORS = 1
         const val DEFAULT_SHOW_IMPOSTORS_IN_RESULT = true
+        const val DEFAULT_DISCUSSION_TIMER_SECONDS = 180
     }
 }

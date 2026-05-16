@@ -13,6 +13,7 @@ dependencies {
 
     api(projects.domain.usescases.authentication)
     api(projects.domain.models)
+    api(projects.domain.managers)
     api(projects.domain.usescases.settings)
 
     api(projects.feature.debug)

@@ -5,6 +5,8 @@ data class GameModel(
     val players: List<String> = emptyList(),
     val mode: Modes = Modes.Classic,
     val impostors: Int = 1,
-    val showImpostorsInResult: Boolean = true
+    val showImpostorsInResult: Boolean = true,
+    val discussionTimerSeconds: Int = 180,
+    val impostorsKnowEachOther: Boolean = false,
 )
 

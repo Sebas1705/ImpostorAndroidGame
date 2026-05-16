@@ -10,11 +10,15 @@ class UpdateGameModeUseCase @Inject constructor(
     suspend operator fun invoke(
         mode: Modes,
         impostors: Int,
-        showImpostorsInResult: Boolean
+        showImpostorsInResult: Boolean,
+        discussionTimerSeconds: Int,
+        impostorsKnowEachOther: Boolean,
     ) = gameRepository.updateMode(
         mode.name,
         impostors,
-        showImpostorsInResult
+        showImpostorsInResult,
+        discussionTimerSeconds,
+        impostorsKnowEachOther,
     )
 }
 

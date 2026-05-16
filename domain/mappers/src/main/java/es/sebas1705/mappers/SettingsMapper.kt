@@ -3,6 +3,7 @@ package es.sebas1705.mappers
 import es.sebas1705.common.theme.ThemeContrast
 import es.sebas1705.datastore.model.SettingsData
 import es.sebas1705.models.AppLanguage
+import es.sebas1705.models.DarkThemePreference
 import es.sebas1705.models.SettingsModel
 
 /**
@@ -18,6 +19,7 @@ fun SettingsData.toModel() = SettingsModel(
     appContrast = ThemeContrast.entries[appContrast],
     appLanguage = AppLanguage.fromCode(appLanguage),
     forceCompactTables = forceCompactTables,
+    darkThemePreference = DarkThemePreference.fromValue(darkTheme),
 )
 
 /**
@@ -34,4 +36,5 @@ fun SettingsModel.toData() = SettingsData(
     defaultSet = true,
     appLanguage = appLanguage.code,
     forceCompactTables = forceCompactTables,
+    darkTheme = darkThemePreference.value,
 )

@@ -23,8 +23,10 @@ fun HomeNav(
         categories: List<String>,
         modeName: String,
         impostors: Int,
-        showImpostorsInResult: Boolean
-    ) -> Unit = { _, _, _, _, _ -> },
+        showImpostorsInResult: Boolean,
+        discussionTimerSeconds: Int,
+        impostorsKnowEachOther: Boolean
+    ) -> Unit = { _, _, _, _, _, _, _ -> },
 ) {
     val backStack = rememberNavBackStack(HomeGraph.FaceScreen)
 

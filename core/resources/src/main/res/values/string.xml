@@ -21,6 +21,10 @@
     <string name="core_resources_contrast_low">Low</string>
     <string name="core_resources_contrast_medium">Medium</string>
     <string name="core_resources_contrast_high">High</string>
+    <string name="core_resources_settings_dark_theme">Dark theme</string>
+    <string name="core_resources_settings_theme_system">System</string>
+    <string name="core_resources_settings_theme_light">Light</string>
+    <string name="core_resources_settings_theme_dark">Dark</string>
     <string name="core_resources_settings_gameplay_title">Gameplay</string>
     <string name="core_resources_settings_language">Language</string>
     <string name="core_resources_language_english">English</string>
@@ -145,6 +149,11 @@
     <string name="core_resources_game_mode_result_impostors_summary">Result impostors: %1$s</string>
     <string name="core_resources_decrease_impostors">Decrease impostors</string>
     <string name="core_resources_increase_impostors">Increase impostors</string>
+    <string name="core_resources_game_mode_timer">Discussion timer</string>
+    <string name="core_resources_game_mode_timer_no_limit">No limit</string>
+    <string name="core_resources_game_mode_timer_seconds">%1$d s</string>
+    <string name="core_resources_game_mode_impostors_know">Impostors know each other</string>
+    <string name="core_resources_game_mode_impostors_know_desc">Impostors see the other impostors\' names on their reveal card.</string>
 
     <string name="core_resources_face_environment">Environment</string>
     <string name="core_resources_face_edit_mode">Modify your mode</string>
@@ -161,6 +170,7 @@
     <string name="core_resources_face_start_offline_game">Start offline game</string>
     <string name="core_resources_face_mode">Mode</string>
     <string name="core_resources_face_mode_summary">%1$s - Impostors: %2$d</string>
+    <string name="core_resources_face_open_mode">Open mode settings</string>
     <string name="core_resources_face_online_coming_soon">Online mode is coming soon! In the meantime, you can enjoy offline mode with your friends.</string>
 
     <string name="core_resources_offline_game_title">Offline game</string>
@@ -173,6 +183,22 @@
     <string name="core_resources_word_prefix">Word: %1$s</string>
     <string name="core_resources_next_player">Next player</string>
     <string name="core_resources_start_game">Start game</string>
+    <string name="core_resources_pass_phone_title">Pass the phone to</string>
+    <string name="core_resources_all_revealed_title">Everyone is ready!</string>
+    <string name="core_resources_all_revealed_body">All players have seen their role. The debate can begin.</string>
+    <string name="core_resources_ready">Ready</string>
+    <string name="core_resources_discussion_timer_label">Time remaining</string>
+    <string name="core_resources_discussion_timer_warning">Time is almost up!</string>
+    <string name="core_resources_info_players">%1$d players</string>
+    <string name="core_resources_info_impostors">%1$d impostors</string>
+    <string name="core_resources_info_alive">%1$d alive</string>
+    <string name="core_resources_info_eliminated">%1$d eliminated</string>
+    <string name="core_resources_result_player_roles">Player roles</string>
+    <string name="core_resources_result_vote_accuracy">Vote accuracy</string>
+    <string name="core_resources_face_ready_players">%1$d players ✓</string>
+    <string name="core_resources_face_warn_players">Need 3+ players</string>
+    <string name="core_resources_face_ready_categories">%1$d categories ✓</string>
+    <string name="core_resources_face_warn_categories">No category selected</string>
     <string name="core_resources_starts_player">Starts: %1$s</string>
     <string name="core_resources_unknown">Unknown</string>
     <string name="core_resources_guess_word_label">Try to guess the secret word</string>

@@ -14,6 +14,8 @@ data class FaceState(
     val mode: Modes = Modes.Classic,
     val impostors: Int = 1,
     val showImpostorsInResult: Boolean = true,
+    val discussionTimerSeconds: Int = 180,
+    val impostorsKnowEachOther: Boolean = false,
     val errorMessage: String? = null
 ) : MVIBaseState
 

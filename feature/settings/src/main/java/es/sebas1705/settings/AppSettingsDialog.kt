@@ -49,6 +49,9 @@ fun AppSettingsDialog(
             onUpdateLanguage = {
                 appSettingsViewModel.eventHandler(AppSettingsIntent.UpdateLanguage(it))
             },
+            onUpdateDarkTheme = {
+                appSettingsViewModel.eventHandler(AppSettingsIntent.UpdateDarkTheme(it))
+            },
             onResetDefaults = {
                 appSettingsViewModel.eventHandler(AppSettingsIntent.ResetDefaults)
             }

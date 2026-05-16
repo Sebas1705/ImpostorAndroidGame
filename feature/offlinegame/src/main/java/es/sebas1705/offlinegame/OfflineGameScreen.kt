@@ -2,6 +2,13 @@
 
 package es.sebas1705.offlinegame
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -40,6 +47,8 @@ import es.sebas1705.offlinegame.viewmodel.OfflineGameViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 
+private const val PHASE_TRANSITION_DURATION_MS = 350
+
 @Composable
 fun OfflineGameScreen(
     players: ImmutableList<String>,
@@ -47,6 +56,8 @@ fun OfflineGameScreen(
     mode: Modes,
     impostors: Int,
     showImpostorsInResult: Boolean,
+    discussionTimerSeconds: Int = 180,
+    impostorsKnowEachOther: Boolean = false,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     viewModel: OfflineGameViewModel = hiltViewModel()
@@ -63,7 +74,9 @@ fun OfflineGameScreen(
                 players = players,
                 categories = categories,
                 mode = mode,
-                impostors = impostors
+                impostors = impostors,
+                discussionTimerSeconds = discussionTimerSeconds,
+                impostorsKnowEachOther = impostorsKnowEachOther,
             )
         )
     }
@@ -164,41 +177,57 @@ private fun OfflineGameDesign(
             return@Scaffold
         }
 
-        when (uiState.step) {
-            OfflineGameStep.Reveal -> {
-                OfflineGameRevealScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(16.dp),
-                    uiState = uiState,
-                    onRevealDone = onRevealDone,
-                    onNextRevealPlayer = onNextRevealPlayer
-                )
-            }
+        AnimatedContent(
+            targetState = uiState.step,
+            transitionSpec = {
+                val enterOffset = if (targetState.ordinal > initialState.ordinal) 1 else -1
+                (fadeIn(tween(PHASE_TRANSITION_DURATION_MS)) +
+                    slideInVertically(tween(PHASE_TRANSITION_DURATION_MS)) { it / 5 * enterOffset })
+                    .togetherWith(
+                        fadeOut(tween(PHASE_TRANSITION_DURATION_MS / 2)) +
+                            slideOutVertically(tween(PHASE_TRANSITION_DURATION_MS)) { -it / 10 * enterOffset }
+                    )
+            },
+            label = "game_step_transition"
+        ) { step ->
+            when (step) {
+                OfflineGameStep.Reveal -> {
+                    OfflineGameRevealScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .padding(16.dp),
+                        uiState = uiState,
+                        onRevealDone = onRevealDone,
+                        onNextRevealPlayer = onNextRevealPlayer
+                    )
+                }
 
-            OfflineGameStep.Discussion -> {
-                OfflineGameDiscussionScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(16.dp),
-                    uiState = uiState,
-                    onVotePlayer = onVotePlayer,
-                    onGuess = onGuess
-                )
-            }
+                OfflineGameStep.Discussion -> {
+                    OfflineGameDiscussionScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .padding(16.dp),
+                        uiState = uiState,
+                        onVotePlayer = onVotePlayer,
+                        onGuess = onGuess
+                    )
+                }
 
-            OfflineGameStep.Result -> {
-                OfflineGameResultScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(16.dp),
-                    result = uiState.result,
-                    showImpostorsInResult = showImpostorsInResult,
-                    onBack = onBack
-                )
+                OfflineGameStep.Result -> {
+                    OfflineGameResultScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .padding(16.dp),
+                        result = uiState.result,
+                        showImpostorsInResult = showImpostorsInResult,
+                        players = uiState.players,
+                        impostorIndexes = uiState.impostorPlayerIndexes,
+                        onBack = onBack
+                    )
+                }
             }
         }
     }

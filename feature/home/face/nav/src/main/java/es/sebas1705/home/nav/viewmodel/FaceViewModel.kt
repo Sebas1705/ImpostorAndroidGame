@@ -37,6 +37,8 @@ class FaceViewModel @Inject constructor(
                         mode = game.mode,
                         impostors = game.impostors,
                         showImpostorsInResult = game.showImpostorsInResult,
+                        discussionTimerSeconds = game.discussionTimerSeconds,
+                        impostorsKnowEachOther = game.impostorsKnowEachOther,
                         errorMessage = null,
                     )
                 }

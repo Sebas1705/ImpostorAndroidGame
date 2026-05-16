@@ -7,6 +7,7 @@ import es.sebas1705.common.mvi.MVIBaseViewModel
 import es.sebas1705.common.utlis.extensions.types.logW
 import es.sebas1705.common.theme.ThemeContrast
 import es.sebas1705.models.AppLanguage
+import es.sebas1705.models.DarkThemePreference
 import es.sebas1705.models.SettingsModel
 import es.sebas1705.settings.ReadSettingsUseCase
 import es.sebas1705.settings.UpdateSettingsUseCase
@@ -34,6 +35,7 @@ class AppSettingsViewModel @Inject constructor(
             }
             is AppSettingsIntent.SetShowTutorialOnNextStart -> persistSettings { it.copy(firstTime = intent.show) }
             is AppSettingsIntent.UpdateLanguage -> persistSettings { it.copy(appLanguage = intent.language) }
+            is AppSettingsIntent.UpdateDarkTheme -> persistSettings { it.copy(darkThemePreference = intent.pref) }
             AppSettingsIntent.ResetDefaults -> persistSettings {
                 SettingsModel(
                     firstTime = false,
@@ -42,6 +44,7 @@ class AppSettingsViewModel @Inject constructor(
                     appContrast = ThemeContrast.Low,
                     appLanguage = resolveInitialLanguage(),
                     forceCompactTables = false,
+                    darkThemePreference = DarkThemePreference.System,
                 )
             }
         }

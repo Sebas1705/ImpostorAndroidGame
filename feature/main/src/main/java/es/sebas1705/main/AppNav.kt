@@ -2,6 +2,7 @@ package es.sebas1705.main
 
 import android.app.Activity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -22,6 +23,7 @@ import es.sebas1705.main.models.AppNavOverlayActions
 import es.sebas1705.main.models.AppNavOverlayState
 import es.sebas1705.main.viewmodel.MainIntent
 import es.sebas1705.main.viewmodel.MainViewModel
+import es.sebas1705.models.DarkThemePreference
 import es.sebas1705.ui.adaptive.LocalForceCompactTables
 import es.sebas1705.ui.theme.AppTheme
 import java.util.Locale
@@ -76,8 +78,15 @@ fun AppNav(
         (context as? Activity)?.recreate()
     }
 
+    val systemInDark = isSystemInDarkTheme()
+    val darkTheme = when (mainState.darkThemePreference) {
+        DarkThemePreference.Light -> false
+        DarkThemePreference.Dark -> true
+        DarkThemePreference.System -> systemInDark
+    }
     AppTheme(
         modifier = modifier,
+        darkTheme = darkTheme,
         themeContrast = mainState.themeContrast
     ) {
         CompositionLocalProvider(

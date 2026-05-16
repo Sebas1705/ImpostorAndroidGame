@@ -3,6 +3,7 @@ package es.sebas1705.main.viewmodel
 import es.sebas1705.common.mvi.MVIBaseState
 import es.sebas1705.common.theme.ThemeContrast
 import es.sebas1705.models.AppLanguage
+import es.sebas1705.models.DarkThemePreference
 
 /**
  * Data class that represents the state of the Main Screen.
@@ -19,4 +20,5 @@ data class MainState(
     val appLanguage: AppLanguage = AppLanguage.English,
     val themeContrast: ThemeContrast = ThemeContrast.Low,
     val forceCompactTables: Boolean = false,
+    val darkThemePreference: DarkThemePreference = DarkThemePreference.System,
 ) : MVIBaseState

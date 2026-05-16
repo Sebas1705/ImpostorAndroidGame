@@ -51,6 +51,6 @@
     {"word":"Dados cargados","clues":["Trampa","Peso","Número","Ganar","Engaño"],"category":"board_games_and_tabletop"},
     {"word":"Ludoteca","clues":["Colección","Juegos","Estantería","Muchos","Casa"],"category":"board_games_and_tabletop"},
     {"word":"Pista","clues":["Ayuda","Reglas","Juego","Sugerencia","Resolver"],"category":"board_games_and_tabletop"},
-    {"word":"Ronda","clues":["Vuelta","Turno","Juego","Completar","Todos"],"category":"board_games_and_tabletop"},
+    {"word":"Ronda","clues":["Vuelta","Turno","Juego","Completar","Todos"],"category":"board_games_and_tabletop"}
   ]
 }

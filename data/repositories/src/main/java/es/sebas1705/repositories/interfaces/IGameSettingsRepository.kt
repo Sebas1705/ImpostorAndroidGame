@@ -13,6 +13,6 @@ interface IGameSettingsRepository {
 
     suspend fun updatePlayers(players: List<String>)
 
-    suspend fun updateMode(mode: String, impostors: Int, showImpostorsInResult: Boolean)
+    suspend fun updateMode(mode: String, impostors: Int, showImpostorsInResult: Boolean, discussionTimerSeconds: Int, impostorsKnowEachOther: Boolean)
 }
 

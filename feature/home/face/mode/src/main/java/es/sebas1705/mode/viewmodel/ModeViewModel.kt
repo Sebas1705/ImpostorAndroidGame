@@ -29,7 +29,9 @@ class ModeViewModel @Inject constructor(
             updateGameModeUseCase(
                 intent.mode,
                 intent.impostors,
-                intent.showImpostorsInResult
+                intent.showImpostorsInResult,
+                intent.discussionTimerSeconds,
+                intent.impostorsKnowEachOther,
             )
         }.onFailure { logW("save failed: ${it.message}") }
     }

@@ -8,7 +8,11 @@ import es.sebas1705.common.mvi.MVIBaseViewModel
 import es.sebas1705.common.utlis.extensions.types.logD
 import es.sebas1705.common.utlis.extensions.types.logI
 import es.sebas1705.common.utlis.extensions.types.logW
+import es.sebas1705.core.resources.Musics
 import es.sebas1705.core.resources.R
+import es.sebas1705.core.resources.Sounds
+import es.sebas1705.domain.managers.MediaPlayerManager
+import es.sebas1705.domain.managers.SoundPoolManager
 import es.sebas1705.game.words.SearchWordsUseCase
 import es.sebas1705.models.Modes
 import es.sebas1705.offlinegame.models.OfflineGameResult
@@ -25,7 +29,9 @@ import kotlin.random.Random
 class OfflineGameViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val searchWordsUseCase: SearchWordsUseCase,
-    private val recordOfflineMatchResultUseCase: RecordOfflineMatchResultUseCase
+    private val recordOfflineMatchResultUseCase: RecordOfflineMatchResultUseCase,
+    private val mediaPlayerManager: MediaPlayerManager,
+    private val soundPoolManager: SoundPoolManager,
 ) : MVIBaseViewModel<OfflineGameState, OfflineGameIntent>(context) {
 
     private companion object {
@@ -47,6 +53,8 @@ class OfflineGameViewModel @Inject constructor(
     private fun initialize(
         intent: OfflineGameIntent.Initialize
     ) = execute(Dispatchers.IO) {
+        runCatching { mediaPlayerManager.changeSong(Musics.GAME) }
+            .onFailure { logW("audio switch failed: ${it.message}") }
         logI(
             "initialize start playersRaw=${intent.players.size} categories=${intent.categories.size} " +
                 "mode=${intent.mode} impostorsRequested=${intent.impostors}"
@@ -109,7 +117,9 @@ class OfflineGameViewModel @Inject constructor(
                 correctVotes = 0,
                 incorrectVotes = 0,
                 guessFeedback = null,
-                result = null
+                result = null,
+                discussionTimerSeconds = intent.discussionTimerSeconds,
+                impostorsKnowEachOther = intent.impostorsKnowEachOther,
             )
         }
         logI("initialize done step=${OfflineGameStep.Reveal}")
@@ -187,6 +197,9 @@ class OfflineGameViewModel @Inject constructor(
                     "aliveAfter=${newAlive.size} correctVotes=$correctVotes incorrectVotes=$incorrectVotes"
             )
 
+            runCatching { soundPoolManager.play(Sounds.CLK_CASUAL) }
+                .onFailure { logW("sfx vote failed: ${it.message}") }
+
             if (result == null) {
                 val voteFeedback = if (BuildConfig.DEBUG) {
                     if (isImpostor) {
@@ -215,6 +228,13 @@ class OfflineGameViewModel @Inject constructor(
                 )
             } else {
                 logI("votePlayer finished result=${describeResult(result)}")
+                val resultSfx = when (result.winner) {
+                    OfflineWinner.Civilians -> Sounds.SND_WIN
+                    OfflineWinner.Impostors -> Sounds.SND_LOSE
+                    OfflineWinner.Tie -> Sounds.SND_BOWING
+                }
+                runCatching { soundPoolManager.play(resultSfx) }
+                    .onFailure { logW("sfx result failed: ${it.message}") }
                 recordRankingForWinner(
                     players = state.players,
                     impostorIndexes = state.impostorPlayerIndexes,
@@ -253,6 +273,8 @@ class OfflineGameViewModel @Inject constructor(
 
             if (guess == solution) {
                 logI("submitGuess success winner=Impostors guessedWord='${state.wordEntry.word}'")
+                runCatching { soundPoolManager.play(Sounds.SND_LOSE) }
+                    .onFailure { logW("sfx guess-win failed: ${it.message}") }
                 recordRankingForWinner(
                     players = state.players,
                     impostorIndexes = state.impostorPlayerIndexes,

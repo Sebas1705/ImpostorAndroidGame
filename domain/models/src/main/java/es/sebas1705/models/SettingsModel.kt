@@ -20,4 +20,5 @@ data class SettingsModel (
     val appContrast: ThemeContrast,
     val appLanguage: AppLanguage,
     val forceCompactTables: Boolean,
+    val darkThemePreference: DarkThemePreference = DarkThemePreference.System,
 )

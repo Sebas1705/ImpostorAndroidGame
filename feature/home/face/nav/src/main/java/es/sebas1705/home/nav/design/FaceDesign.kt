@@ -1,29 +1,45 @@
 package es.sebas1705.home.nav.design
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Category
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.CloudQueue
+import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.LocalLibrary
 import androidx.compose.material.icons.outlined.OfflineBolt
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.material.icons.outlined.TimerOff
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -52,9 +68,7 @@ fun FaceDesign(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = onOpenSettings,
-            ) {
+            FloatingActionButton(onClick = onOpenSettings) {
                 Icon(
                     imageVector = Icons.Outlined.Settings,
                     contentDescription = stringResource(R.string.core_resources_settings_title)
@@ -62,240 +76,358 @@ fun FaceDesign(
             }
         }
     ) { paddingValues ->
-        LazyColumn(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(paddingValues)
         ) {
-            item(contentType = "contentType1") {
-                GameCoverCard()
-            }
-            item(contentType = "contentType2") {
-                Text(
-                    text = stringResource(R.string.core_resources_face_environment),
-                    style = MaterialTheme.typography.titleLarge.makeTitle(),
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-            item(contentType = "contentType3") {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    ModeCard(
-                        title = stringResource(R.string.core_resources_face_offline_mode),
-                        description = stringResource(R.string.core_resources_face_offline_mode_desc),
-                        icon = Icons.Outlined.OfflineBolt,
-                        onClick = {
-                            selectedOffline.value = true
-                        },
-                        modifier = Modifier.weight(1f),
-                        selected = selectedOffline.value
-                    )
-                    ModeCard(
-                        title = stringResource(R.string.core_resources_face_online_mode),
-                        description = stringResource(R.string.core_resources_face_online_mode_desc),
-                        icon = Icons.Outlined.CloudQueue,
-                        onClick = {
-                            selectedOffline.value = false
-                        },
-                        modifier = Modifier.weight(1f),
-                        selected = !selectedOffline.value
-                    )
-                }
-            }
-
-            if (selectedOffline.value) {
-                item(contentType = "contentType4") {
-                    Text(
-                        text = stringResource(R.string.core_resources_face_edit_mode),
-                        style = MaterialTheme.typography.titleLarge.makeTitle(),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-                item(contentType = "contentType5") {
-                    Card(
-                        modifier = Modifier.padding(bottom = 8.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer
-                        )
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.LocalLibrary,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                            )
-                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Text(
-                                    text = stringResource(R.string.core_resources_face_categories),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                                Text(
-                                    text = stringResource(
-                                        R.string.core_resources_face_categories_selected,
-                                        faceState.categoriesStates.count { it.value }
-                                    ),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                                FilledTonalButton(
-                                    onClick = onOpenCategories,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(stringResource(R.string.core_resources_face_open_categories))
-                                }
-                            }
-                        }
-                    }
-                }
-
-                item(contentType = "contentType6") {
-                    Card(
-                        modifier = Modifier.padding(bottom = 8.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer
-                        )
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.People,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                            )
-                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Text(
-                                    text = stringResource(R.string.core_resources_face_users),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                                Text(
-                                    text = stringResource(
-                                        R.string.core_resources_face_users_count,
-                                        faceState.users.size
-                                    ),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                                FilledTonalButton(
-                                    onClick = onOpenUser,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(stringResource(R.string.core_resources_face_open_users))
-                                }
-                            }
-                        }
-                    }
-                }
-
-                item(contentType = "contentType7") {
-                    Card(
-                        modifier = Modifier.padding(bottom = 8.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer
-                        )
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Settings,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                            )
-                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Text(
-                                    text = stringResource(R.string.core_resources_face_mode),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                                Text(
-                                    text = stringResource(
-                                        R.string.core_resources_face_mode_summary,
-                                        when (faceState.mode) {
-                                            es.sebas1705.models.Modes.Classic -> stringResource(
-                                                R.string.core_resources_game_mode_classic_name
-                                            )
-
-                                            es.sebas1705.models.Modes.Chaos -> stringResource(
-                                                R.string.core_resources_game_mode_chaos_name
-                                            )
-                                        },
-                                        faceState.impostors
-                                    ),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                                Text(
-                                    text = stringResource(
-                                        R.string.core_resources_game_mode_result_impostors_summary,
-                                        if (faceState.showImpostorsInResult) {
-                                            stringResource(R.string.core_resources_game_mode_result_impostors_visible)
-                                        } else {
-                                            stringResource(R.string.core_resources_game_mode_result_impostors_hidden)
-                                        }
-                                    ),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                                FilledTonalButton(
-                                    onClick = onOpenMode,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(stringResource(R.string.core_resources_game_mode_open))
-                                }
-                            }
-                        }
-                    }
-                }
-
-                item(contentType = "contentType8") {
-                    FilledTonalButton(
-                        onClick = onStartOfflineGame,
-                        enabled = faceState.users.size >= 3 &&
-                                faceState.categoriesStates.any { it.value },
+            if (maxWidth >= 600.dp) {
+                Row(Modifier.fillMaxSize()) {
+                    LazyColumn(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .padding(end = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(stringResource(R.string.core_resources_face_start_offline_game))
+                        item(contentType = "cover") { GameCoverCard() }
+                        item(contentType = "env_title") {
+                            Text(
+                                text = stringResource(R.string.core_resources_face_environment),
+                                style = MaterialTheme.typography.titleLarge.makeTitle(),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        item(contentType = "mode_selector") {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                ModeCard(
+                                    title = stringResource(R.string.core_resources_face_offline_mode),
+                                    description = stringResource(R.string.core_resources_face_offline_mode_desc),
+                                    icon = Icons.Outlined.OfflineBolt,
+                                    onClick = { selectedOffline.value = true },
+                                    modifier = Modifier.weight(1f),
+                                    selected = selectedOffline.value
+                                )
+                                ModeCard(
+                                    title = stringResource(R.string.core_resources_face_online_mode),
+                                    description = stringResource(R.string.core_resources_face_online_mode_desc),
+                                    icon = Icons.Outlined.CloudQueue,
+                                    onClick = { selectedOffline.value = false },
+                                    modifier = Modifier.weight(1f),
+                                    selected = !selectedOffline.value
+                                )
+                            }
+                        }
+                        if (!selectedOffline.value) {
+                            item(contentType = "online_soon") {
+                                Text(
+                                    text = stringResource(R.string.core_resources_face_online_coming_soon),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+                        if (!faceState.errorMessage.isNullOrBlank()) {
+                            item(contentType = "error") {
+                                Text(text = faceState.errorMessage, color = MaterialTheme.colorScheme.error)
+                            }
+                        }
+                    }
+                    Box(
+                        Modifier
+                            .width(1.dp)
+                            .fillMaxHeight()
+                            .background(MaterialTheme.colorScheme.outlineVariant)
+                    )
+                    if (selectedOffline.value) {
+                        LazyColumn(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .padding(start = 12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            item(contentType = "edit_title") {
+                                Text(
+                                    text = stringResource(R.string.core_resources_face_edit_mode),
+                                    style = MaterialTheme.typography.titleLarge.makeTitle(),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            item(contentType = "cat_card") { FaceCategoriesCard(faceState, onOpenCategories) }
+                            item(contentType = "users_card") { FaceUsersCard(faceState, onOpenUser) }
+                            item(contentType = "mode_card") { FaceModeCard(faceState, onOpenMode) }
+                            item(contentType = "readiness") {
+                                GameConfigChips(faceState)
+                            }
+                            item(contentType = "start") {
+                                FilledTonalButton(
+                                    onClick = onStartOfflineGame,
+                                    enabled = faceState.users.size >= 3 && faceState.categoriesStates.any { it.value },
+                                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                                ) {
+                                    Text(stringResource(R.string.core_resources_face_start_offline_game))
+                                }
+                            }
+                        }
+                    } else {
+                        Box(Modifier.weight(1f).fillMaxHeight())
                     }
                 }
             } else {
-                item(contentType = "contentType9") {
-                    Text(
-                        text = stringResource(R.string.core_resources_face_online_coming_soon),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    item(contentType = "contentType1") { GameCoverCard() }
+                    item(contentType = "contentType2") {
+                        Text(
+                            text = stringResource(R.string.core_resources_face_environment),
+                            style = MaterialTheme.typography.titleLarge.makeTitle(),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    item(contentType = "contentType3") {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            ModeCard(
+                                title = stringResource(R.string.core_resources_face_offline_mode),
+                                description = stringResource(R.string.core_resources_face_offline_mode_desc),
+                                icon = Icons.Outlined.OfflineBolt,
+                                onClick = { selectedOffline.value = true },
+                                modifier = Modifier.weight(1f),
+                                selected = selectedOffline.value
+                            )
+                            ModeCard(
+                                title = stringResource(R.string.core_resources_face_online_mode),
+                                description = stringResource(R.string.core_resources_face_online_mode_desc),
+                                icon = Icons.Outlined.CloudQueue,
+                                onClick = { selectedOffline.value = false },
+                                modifier = Modifier.weight(1f),
+                                selected = !selectedOffline.value
+                            )
+                        }
+                    }
+                    if (selectedOffline.value) {
+                        item(contentType = "contentType4") {
+                            Text(
+                                text = stringResource(R.string.core_resources_face_edit_mode),
+                                style = MaterialTheme.typography.titleLarge.makeTitle(),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        item(contentType = "contentType5") { FaceCategoriesCard(faceState, onOpenCategories) }
+                        item(contentType = "contentType6") { FaceUsersCard(faceState, onOpenUser) }
+                        item(contentType = "contentType7") { FaceModeCard(faceState, onOpenMode) }
+                        item(contentType = "contentType_readiness") {
+                            GameConfigChips(faceState)
+                        }
+                        item(contentType = "contentType8") {
+                            FilledTonalButton(
+                                onClick = onStartOfflineGame,
+                                enabled = faceState.users.size >= 3 && faceState.categoriesStates.any { it.value },
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                            ) {
+                                Text(stringResource(R.string.core_resources_face_start_offline_game))
+                            }
+                        }
+                    } else {
+                        item(contentType = "contentType9") {
+                            Text(
+                                text = stringResource(R.string.core_resources_face_online_coming_soon),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+                    if (!faceState.errorMessage.isNullOrBlank()) {
+                        item(contentType = "contentType10") {
+                            Text(text = faceState.errorMessage, color = MaterialTheme.colorScheme.error)
+                        }
+                    }
                 }
             }
+        }
+    }
+}
 
-            if (!faceState.errorMessage.isNullOrBlank()) {
-                item(contentType = "contentType10") {
-                    Text(
-                        text = faceState.errorMessage,
-                        color = MaterialTheme.colorScheme.error
+@Composable
+private fun FaceCategoriesCard(faceState: FaceState, onOpenCategories: () -> Unit) {
+    OutlinedButton(
+        onClick = onOpenCategories,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.LocalLibrary,
+            contentDescription = null,
+            modifier = Modifier.size(18.dp)
+        )
+        Text(
+            text = stringResource(
+                R.string.core_resources_face_categories_selected,
+                faceState.categoriesStates.count { it.value }
+            ),
+            modifier = Modifier.padding(start = 6.dp)
+        )
+    }
+}
+
+@Composable
+private fun FaceUsersCard(faceState: FaceState, onOpenUser: () -> Unit) {
+    OutlinedButton(
+        onClick = onOpenUser,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.People,
+            contentDescription = null,
+            modifier = Modifier.size(18.dp)
+        )
+        Text(
+            text = stringResource(R.string.core_resources_face_users_count, faceState.users.size),
+            modifier = Modifier.padding(start = 6.dp)
+        )
+    }
+}
+
+@Composable
+private fun FaceModeCard(faceState: FaceState, onOpenMode: () -> Unit) {
+    OutlinedButton(
+        onClick = onOpenMode,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Settings,
+            contentDescription = null,
+            modifier = Modifier.size(18.dp)
+        )
+        Text(
+            text = stringResource(
+                R.string.core_resources_face_mode_summary,
+                faceState.mode.name,
+                faceState.impostors
+            ),
+            modifier = Modifier.padding(start = 6.dp)
+        )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun GameConfigChips(faceState: FaceState) {
+    val playerCount = faceState.users.size
+    val selectedCategories = faceState.categoriesStates.count { it.value }
+    val playersOk = playerCount >= 3
+    val categoriesOk = selectedCategories >= 1
+
+    FlowRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        SuggestionChip(
+            onClick = {},
+            label = {
+                Text(
+                    text = if (playersOk)
+                        stringResource(R.string.core_resources_face_ready_players, playerCount)
+                    else stringResource(R.string.core_resources_face_warn_players)
+                )
+            },
+            icon = {
+                Icon(
+                    imageVector = if (playersOk) Icons.Outlined.CheckCircle else Icons.Outlined.Warning,
+                    contentDescription = null,
+                    modifier = Modifier.size(SuggestionChipDefaults.IconSize),
+                    tint = if (playersOk) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                )
+            },
+            colors = SuggestionChipDefaults.suggestionChipColors(
+                containerColor = if (playersOk) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                else MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
+            )
+        )
+        SuggestionChip(
+            onClick = {},
+            label = {
+                Text(
+                    text = if (categoriesOk)
+                        stringResource(R.string.core_resources_face_ready_categories, selectedCategories)
+                    else stringResource(R.string.core_resources_face_warn_categories)
+                )
+            },
+            icon = {
+                Icon(
+                    imageVector = if (categoriesOk) Icons.Outlined.Category else Icons.Outlined.Warning,
+                    contentDescription = null,
+                    modifier = Modifier.size(SuggestionChipDefaults.IconSize),
+                    tint = if (categoriesOk) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                )
+            },
+            colors = SuggestionChipDefaults.suggestionChipColors(
+                containerColor = if (categoriesOk) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                else MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
+            )
+        )
+        SuggestionChip(
+            onClick = {},
+            label = { Text(text = "${faceState.mode.name} ×${faceState.impostors}") },
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.Settings,
+                    contentDescription = null,
+                    modifier = Modifier.size(SuggestionChipDefaults.IconSize),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            colors = SuggestionChipDefaults.suggestionChipColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+            )
+        )
+        SuggestionChip(
+            onClick = {},
+            label = {
+                Text(
+                    text = if (faceState.discussionTimerSeconds <= 0)
+                        stringResource(R.string.core_resources_game_mode_timer_no_limit)
+                    else stringResource(R.string.core_resources_game_mode_timer_seconds, faceState.discussionTimerSeconds)
+                )
+            },
+            icon = {
+                Icon(
+                    imageVector = if (faceState.discussionTimerSeconds <= 0) Icons.Outlined.TimerOff else Icons.Outlined.Timer,
+                    contentDescription = null,
+                    modifier = Modifier.size(SuggestionChipDefaults.IconSize),
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+            },
+            colors = SuggestionChipDefaults.suggestionChipColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)
+            )
+        )
+        if (faceState.impostorsKnowEachOther) {
+            SuggestionChip(
+                onClick = {},
+                label = { Text(text = stringResource(R.string.core_resources_game_mode_impostors_know)) },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Outlined.Groups,
+                        contentDescription = null,
+                        modifier = Modifier.size(SuggestionChipDefaults.IconSize),
+                        tint = MaterialTheme.colorScheme.tertiary
                     )
-                }
-            }
+                },
+                colors = SuggestionChipDefaults.suggestionChipColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.4f)
+                )
+            )
         }
     }
 }

@@ -39,6 +39,8 @@ import es.sebas1705.core.resources.R
 import es.sebas1705.models.Modes
 import es.sebas1705.ui.theme.AppTheme
 
+private const val TIMER_STEP_SECONDS = 30
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongMethod")
@@ -47,12 +49,16 @@ fun ModeDesign(
     mode: Modes = Modes.Classic,
     impostors: Int = 1,
     showImpostorsInResult: Boolean = true,
-    onSave: (mode: Modes, impostors: Int, showImpostorsInResult: Boolean) -> Unit = { _, _, _ -> },
+    discussionTimerSeconds: Int = 180,
+    impostorsKnowEachOther: Boolean = false,
+    onSave: (mode: Modes, impostors: Int, showImpostorsInResult: Boolean, discussionTimerSeconds: Int, impostorsKnowEachOther: Boolean) -> Unit = { _, _, _, _, _ -> },
     onBack: () -> Unit = {},
 ) {
     val selectedModeName = rememberSaveable { mutableStateOf(mode.name) }
     val selectedImpostors = rememberSaveable { mutableIntStateOf(impostors.coerceAtLeast(1)) }
     val selectedShowImpostorsInResult = rememberSaveable { mutableStateOf(showImpostorsInResult) }
+    val selectedTimerSeconds = rememberSaveable { mutableIntStateOf(discussionTimerSeconds.coerceAtLeast(0)) }
+    val selectedImpostorsKnowEachOther = rememberSaveable { mutableStateOf(impostorsKnowEachOther) }
 
     Scaffold(
         modifier = modifier
@@ -79,7 +85,9 @@ fun ModeDesign(
                         runCatching { Modes.valueOf(selectedModeName.value) }
                             .getOrDefault(Modes.Classic),
                         selectedImpostors.intValue,
-                        selectedShowImpostorsInResult.value
+                        selectedShowImpostorsInResult.value,
+                        selectedTimerSeconds.intValue,
+                        selectedImpostorsKnowEachOther.value
                     )
                 },
                 modifier = Modifier
@@ -197,6 +205,51 @@ fun ModeDesign(
 
             item {
                 Text(
+                    text = stringResource(R.string.core_resources_game_mode_timer),
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IconButton(
+                        onClick = {
+                            selectedTimerSeconds.intValue =
+                                (selectedTimerSeconds.intValue - TIMER_STEP_SECONDS).coerceAtLeast(0)
+                        },
+                        enabled = selectedTimerSeconds.intValue > 0
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Remove,
+                            contentDescription = null
+                        )
+                    }
+
+                    Text(
+                        text = if (selectedTimerSeconds.intValue == 0)
+                            stringResource(R.string.core_resources_game_mode_timer_no_limit)
+                        else
+                            stringResource(R.string.core_resources_game_mode_timer_seconds, selectedTimerSeconds.intValue),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+
+                    IconButton(
+                        onClick = { selectedTimerSeconds.intValue += TIMER_STEP_SECONDS }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = null
+                        )
+                    }
+                }
+            }
+
+            item {
+                Text(
                     text = stringResource(R.string.core_resources_game_mode_post_game),
                     style = MaterialTheme.typography.titleMedium
                 )
@@ -225,6 +278,33 @@ fun ModeDesign(
                     Switch(
                         checked = selectedShowImpostorsInResult.value,
                         onCheckedChange = { selectedShowImpostorsInResult.value = it }
+                    )
+                }
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.core_resources_game_mode_impostors_know),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = stringResource(R.string.core_resources_game_mode_impostors_know_desc),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Switch(
+                        checked = selectedImpostorsKnowEachOther.value,
+                        onCheckedChange = { selectedImpostorsKnowEachOther.value = it }
                     )
                 }
             }

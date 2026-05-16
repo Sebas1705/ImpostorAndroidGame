@@ -13,6 +13,7 @@ dependencies {
     api(projects.core.resources)
 
     api(projects.domain.models)
+    api(projects.domain.managers)
     api(projects.domain.usescases.game)
     api(projects.domain.usescases.ranking)
 

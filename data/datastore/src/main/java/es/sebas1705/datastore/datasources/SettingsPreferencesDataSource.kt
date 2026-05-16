@@ -17,7 +17,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SettingsPreferencesDataSource @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val settingsPreferences: DataStore<SettingsPreferences>
 ) {
 
@@ -62,6 +62,7 @@ class SettingsPreferencesDataSource @Inject constructor(
             it.defaultSet,
             it.appLanguage,
             it.forceCompactTables,
+            it.darkTheme,
         )
     }
 
@@ -147,6 +148,7 @@ class SettingsPreferencesDataSource @Inject constructor(
             .setDefaultSet(settingsData.defaultSet)
             .setAppLanguage(settingsData.appLanguage)
             .setForceCompactTables(settingsData.forceCompactTables)
+            .setDarkTheme(settingsData.darkTheme)
             .build()
     }
 

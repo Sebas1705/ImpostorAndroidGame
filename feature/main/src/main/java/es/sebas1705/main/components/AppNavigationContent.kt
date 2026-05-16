@@ -126,10 +126,11 @@ internal fun AppNavigationContent(
                         appNavLogD("event open_debug_tools")
                         backStack.push(AppGraph.DebugToolsScreen)
                     },
-                    onOpenOfflineGame = { players, categories, modeName, impostors, showImpostorsInResult ->
+                    onOpenOfflineGame = { players, categories, modeName, impostors, showImpostorsInResult, discussionTimerSeconds, impostorsKnowEachOther ->
                         appNavLogI(
                             "event open_offline_game players=${players.size} categories=${categories.size} " +
-                                "mode=$modeName impostors=$impostors showImpostorsInResult=$showImpostorsInResult"
+                                "mode=$modeName impostors=$impostors showImpostorsInResult=$showImpostorsInResult " +
+                                "timer=$discussionTimerSeconds impostorsKnow=$impostorsKnowEachOther"
                         )
                         backStack.push(
                             AppGraph.OfflineGameScreen(
@@ -137,7 +138,9 @@ internal fun AppNavigationContent(
                                 categories = categories.toImmutableList(),
                                 modeName = modeName,
                                 impostors = impostors,
-                                showImpostorsInResult = showImpostorsInResult
+                                showImpostorsInResult = showImpostorsInResult,
+                                discussionTimerSeconds = discussionTimerSeconds,
+                                impostorsKnowEachOther = impostorsKnowEachOther,
                             )
                         )
                     },
@@ -158,6 +161,8 @@ internal fun AppNavigationContent(
                     mode = Modes.entries.firstOrNull { it.name == route.modeName } ?: Modes.Classic,
                     impostors = route.impostors,
                     showImpostorsInResult = route.showImpostorsInResult,
+                    discussionTimerSeconds = route.discussionTimerSeconds,
+                    impostorsKnowEachOther = route.impostorsKnowEachOther,
                     onBack = {
                         appNavLogI("event offline_back")
                         backStack.pop()

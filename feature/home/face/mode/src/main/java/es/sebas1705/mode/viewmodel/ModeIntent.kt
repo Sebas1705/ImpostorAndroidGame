@@ -7,7 +7,9 @@ sealed interface ModeIntent : MVIBaseIntent {
     data class Save(
         val mode: Modes,
         val impostors: Int,
-        val showImpostorsInResult: Boolean
+        val showImpostorsInResult: Boolean,
+        val discussionTimerSeconds: Int,
+        val impostorsKnowEachOther: Boolean,
     ) : ModeIntent
 }
 

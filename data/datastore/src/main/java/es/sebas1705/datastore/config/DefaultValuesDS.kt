@@ -24,4 +24,6 @@ object DefaultValuesDS {
     const val APP_UI_CONTRAST = 0
     const val APP_LANGUAGE = "en"
     const val FORCE_COMPACT_TABLES = false
+    const val DISCUSSION_TIMER_SECONDS = 180
+    const val DARK_THEME = 0
 }

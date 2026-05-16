@@ -10,4 +10,6 @@ message GamePreferences {
     string mode = 4;
     int32 impostors = 5;
     bool show_impostors_in_result = 6;
+    int32 discussion_timer_seconds = 7;
+    bool impostors_know_each_other = 8;
 }

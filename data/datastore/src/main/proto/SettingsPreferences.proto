@@ -12,4 +12,5 @@ message SettingsPreferences {
     bool authSessionExpected = 6;
     string appLanguage = 7;
     bool forceCompactTables = 8;
+    int32 darkTheme = 9;
 }

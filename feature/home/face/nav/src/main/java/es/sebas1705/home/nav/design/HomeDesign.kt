@@ -112,8 +112,10 @@ fun HomeDesign(
         categories: List<String>,
         modeName: String,
         impostors: Int,
-        showImpostorsInResult: Boolean
-    ) -> Unit = { _, _, _, _, _ -> },
+        showImpostorsInResult: Boolean,
+        discussionTimerSeconds: Int,
+        impostorsKnowEachOther: Boolean
+    ) -> Unit = { _, _, _, _, _, _, _ -> },
     faceViewModel: FaceViewModel = hiltViewModel()
 ) {
     val faceState by faceViewModel.uiState.collectAsStateWithLifecycle()
@@ -257,7 +259,9 @@ fun HomeDesign(
                                 "start offline game users=${faceState.users.size} " +
                                     "selectedCategories=${faceState.categoriesStates.count { it.value }} " +
                                     "mode=${faceState.mode} impostors=${faceState.impostors} " +
-                                    "showImpostorsInResult=${faceState.showImpostorsInResult}"
+                                    "showImpostorsInResult=${faceState.showImpostorsInResult} " +
+                                    "timer=${faceState.discussionTimerSeconds} " +
+                                    "impostorsKnow=${faceState.impostorsKnowEachOther}"
                             )
                             onOpenOfflineGame(
                                 faceState.users.toList(),
@@ -267,7 +271,9 @@ fun HomeDesign(
                                     .map { it.name },
                                 faceState.mode.name,
                                 faceState.impostors,
-                                faceState.showImpostorsInResult
+                                faceState.showImpostorsInResult,
+                                faceState.discussionTimerSeconds,
+                                faceState.impostorsKnowEachOther
                             )
                         },
                         onOpenSettings = onOpenSettings
@@ -308,6 +314,8 @@ fun HomeDesign(
                 mode = faceState.mode,
                 impostors = faceState.impostors,
                 showImpostorsInResult = faceState.showImpostorsInResult,
+                discussionTimerSeconds = faceState.discussionTimerSeconds,
+                impostorsKnowEachOther = faceState.impostorsKnowEachOther,
                 onDismiss = {
                     homeDesignLogD("dismiss mode dialog")
                     showModeDialog.value = false

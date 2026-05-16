@@ -9,7 +9,9 @@ sealed interface OfflineGameIntent : MVIBaseIntent {
         val players: List<String>,
         val categories: Set<Categories>,
         val mode: Modes,
-        val impostors: Int
+        val impostors: Int,
+        val discussionTimerSeconds: Int = 180,
+        val impostorsKnowEachOther: Boolean = false,
     ) : OfflineGameIntent
 
     data object MarkRevealDone : OfflineGameIntent

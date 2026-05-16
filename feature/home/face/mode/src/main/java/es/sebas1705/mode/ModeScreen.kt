@@ -15,6 +15,8 @@ fun ModeScreen(
     mode: Modes,
     impostors: Int,
     showImpostorsInResult: Boolean,
+    discussionTimerSeconds: Int,
+    impostorsKnowEachOther: Boolean,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     modeViewModel: ModeViewModel = hiltViewModel()
@@ -24,12 +26,16 @@ fun ModeScreen(
         mode = mode,
         impostors = impostors,
         showImpostorsInResult = showImpostorsInResult,
-        onSave = { selectedMode, selectedImpostors, selectedShowImpostorsInResult ->
+        discussionTimerSeconds = discussionTimerSeconds,
+        impostorsKnowEachOther = impostorsKnowEachOther,
+        onSave = { selectedMode, selectedImpostors, selectedShowImpostorsInResult, selectedTimer, selectedKnow ->
             modeViewModel.eventHandler(
                 ModeIntent.Save(
                     mode = selectedMode,
                     impostors = selectedImpostors,
-                    showImpostorsInResult = selectedShowImpostorsInResult
+                    showImpostorsInResult = selectedShowImpostorsInResult,
+                    discussionTimerSeconds = selectedTimer,
+                    impostorsKnowEachOther = selectedKnow,
                 )
             )
             onBack()
@@ -43,7 +49,9 @@ fun ModeFullScreenDialog(
     onDismiss: () -> Unit,
     mode: Modes,
     impostors: Int,
-    showImpostorsInResult: Boolean
+    showImpostorsInResult: Boolean,
+    discussionTimerSeconds: Int,
+    impostorsKnowEachOther: Boolean,
 ) {
     Dialog(
         onDismissRequest = onDismiss,
@@ -56,10 +64,10 @@ fun ModeFullScreenDialog(
             mode = mode,
             impostors = impostors,
             showImpostorsInResult = showImpostorsInResult,
+            discussionTimerSeconds = discussionTimerSeconds,
+            impostorsKnowEachOther = impostorsKnowEachOther,
             modifier = Modifier,
             onBack = onDismiss,
         )
     }
 }
-
-

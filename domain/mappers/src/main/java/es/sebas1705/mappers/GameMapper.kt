@@ -14,7 +14,9 @@ fun GameData.toModel() = GameModel(
     players = players,
     mode = runCatching { Modes.valueOf(mode) }.getOrDefault(Modes.Classic),
     impostors = impostors.coerceAtLeast(1),
-    showImpostorsInResult = showImpostorsInResult
+    showImpostorsInResult = showImpostorsInResult,
+    discussionTimerSeconds = discussionTimerSeconds.coerceAtLeast(0),
+    impostorsKnowEachOther = impostorsKnowEachOther,
 )
 
 fun GameModel.toData() = GameData(
@@ -22,6 +24,8 @@ fun GameModel.toData() = GameData(
     players = players,
     mode = mode.name,
     impostors = impostors,
-    showImpostorsInResult = showImpostorsInResult
+    showImpostorsInResult = showImpostorsInResult,
+    discussionTimerSeconds = discussionTimerSeconds,
+    impostorsKnowEachOther = impostorsKnowEachOther,
 )
 

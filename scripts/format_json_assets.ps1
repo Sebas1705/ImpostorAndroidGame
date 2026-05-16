@@ -8,7 +8,7 @@ $files = Get-ChildItem -Path "$assetsPath/*.json"
 # Preparar codificación UTF8 sin BOM
 $Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
-# Mapeo de reparación manual mejorado (Tratando variaciones de Windows-1252/UTF-8)
+# Mapeo de reparación manual mejorado
 $rep = @{
     ([char]0xC3 + [char]0xA1) = [char]0xE1 # á
     ([char]0xC3 + [char]0xA9) = [char]0xE9 # é
@@ -26,8 +26,7 @@ $rep = @{
     ([char]0xC2 + [char]0xBF) = [char]0xBF # ¿
     ([char]0xC2 + [char]0xA1) = [char]0xA1 # ¡
 
-    # Variaciones específicas de representación visual (como Ã‰xtasis)
-    ([char]0xC3 + [char]0x2030) = [char]0xC9 # É (Ã followed by ‰)
+    ([char]0xC3 + [char]0x2030) = [char]0xC9 # É
     ([char]0xC3 + [char]0x201C) = [char]0xD3 # Ó
     ([char]0xC3 + [char]0x201D) = [char]0xD3 # Ó
     ([char]0xC3 + [char]0x2014) = [char]0xDA # Ú
@@ -41,16 +40,19 @@ $totalFinal = 0
 $stats = @()
 
 foreach ($file in $files) {
-    Write-Host "Procesando: $($file.Name)"
+    # Write-Host "Procesando: $($file.Name)"
 
+    $categoryName = $file.BaseName -replace '_(es|en)$', ''
     $content = [System.IO.File]::ReadAllText($file.FullName, [System.Text.Encoding]::UTF8)
 
-    # Aplicar reparaciones de codificación
+    # 1. Limpieza de comas
+    $content = $content -replace ',\s*\]', ']'
+    $content = $content -replace ',\s*\}', '}'
+
+    # 2. Reparar codificación
     foreach ($key in $rep.Keys) {
         $content = $content.Replace($key, $rep[$key])
     }
-
-    # Reemplazar escapes unicode comunes por caracteres literales
     $content = $content.Replace('\u0027', "'").Replace('\u0026', "&")
 
     try {
@@ -59,38 +61,52 @@ foreach ($file in $files) {
         $totalOriginal += $countOriginal
 
         $processedWords = @()
+        $index = 0
 
-        foreach ($wordObj in $json.words) {
-            if ($null -eq $wordObj.word) { continue }
-            $wordObj.word = $wordObj.word.ToString().Trim()
+        foreach ($rawObj in $json.words) {
+            # --- VALIDACIÓN ULTRA-ESTRICTA ---
+            $props = $rawObj.PSObject.Properties.Name
 
-            $wordNameCount = ($wordObj.word -split '\s+').Length
-            if ($wordNameCount -gt 3) { continue }
-
-            $cleanClues = @()
-            $hasTooLongClue = $false
-
-            foreach ($clue in $wordObj.clues) {
-                if ($null -eq $clue) { continue }
-                $clueStr = $clue.ToString().Trim()
-                if ($clueStr -eq "") { continue }
-
-                $cleanClue = $clueStr.Replace("_", " ").Trim()
-
-                if (($cleanClue -split '\s+').Length -gt 3) {
-                    $hasTooLongClue = $true
-                    break
-                }
-                $cleanClues += $cleanClue
+            if ($props -notcontains "word") {
+                Write-Warning "$($file.Name): Word at index $index missing 'word' field."
+                $index++; continue
+            }
+            if ($props -notcontains "clues") {
+                Write-Warning "$($file.Name): Word '$($rawObj.word)' at index $index missing 'clues' field."
+                $index++; continue
             }
 
-            if ($hasTooLongClue) { continue }
-            if ($cleanClues.Count -eq 0) { continue }
+            if ($null -eq $rawObj.word -or $null -eq $rawObj.clues) {
+                 Write-Warning "$($file.Name): Word at index $index has null values."
+                 $index++; continue
+            }
 
-            $wordObj.clues = $cleanClues
-            $processedWords += $wordObj
+            $wordStr = $rawObj.word.ToString().Trim()
+            if ($wordStr -eq "" -or ($wordStr -split '\s+').Length -gt 3) { $index++; continue }
+
+            # Limpiar pistas
+            $cleanClues = @()
+            foreach ($c in $rawObj.clues) {
+                if ($null -eq $c) { continue }
+                $cs = $c.ToString().Replace("_", " ").Trim()
+                if ($cs -ne "" -and ($cs -split '\s+').Length -le 3) {
+                    $cleanClues += $cs
+                }
+            }
+
+            if ($cleanClues.Count -eq 0) { $index++; continue }
+
+            # RECONSTRUCCIÓN MANUAL
+            $finalObj = [Ordered]@{
+                word = $wordStr
+                clues = $cleanClues
+                category = $categoryName
+            }
+            $processedWords += New-Object PSObject -Property $finalObj
+            $index++
         }
 
+        # DEDUPLICACIÓN
         $uniqueWords = $processedWords | Group-Object { $_.word.ToLower() } | ForEach-Object { $_.Group[0] }
 
         $countFinal = $uniqueWords.Count
@@ -103,6 +119,7 @@ foreach ($file in $files) {
             Eliminados = $countOriginal - $countFinal
         }
 
+        # 4. Reconstrucción final
         $wordLines = $uniqueWords | ForEach-Object {
             $compact = $_ | ConvertTo-Json -Compress
             "    $compact"
@@ -114,17 +131,15 @@ foreach ($file in $files) {
         [System.IO.File]::WriteAllText($file.FullName, $finalJson, $Utf8NoBom)
 
     } catch {
-        Write-Warning "  !! Error en $($file.Name): $($_.Exception.Message)"
+        Write-Warning "  !! Error fatal en $($file.Name): $($_.Exception.Message)"
     }
 }
 
 Write-Host "`n" + ("=" * 60)
-Write-Host "RESUMEN DEL BANCO DE PALABRAS"
+Write-Host "RESUMEN DE INTEGRIDAD"
 Write-Host ("=" * 60)
 $stats | Format-Table -AutoSize
 Write-Host ("-" * 60)
 Write-Host "TOTAL PALABRAS ORIGINALES: $totalOriginal"
 Write-Host "TOTAL PALABRAS FINALES:    $totalFinal"
-Write-Host "TOTAL ELIMINADAS:          $($totalOriginal - $totalFinal)"
 Write-Host ("=" * 60)
-Write-Host "¡Listo! Limpieza y normalización completada."

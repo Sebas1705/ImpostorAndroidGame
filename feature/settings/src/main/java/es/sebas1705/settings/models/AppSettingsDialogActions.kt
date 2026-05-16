@@ -2,6 +2,7 @@ package es.sebas1705.settings.models
 
 import es.sebas1705.common.theme.ThemeContrast
 import es.sebas1705.models.AppLanguage
+import es.sebas1705.models.DarkThemePreference
 
 internal data class AppSettingsDialogActions(
     val onDismiss: () -> Unit,
@@ -12,6 +13,7 @@ internal data class AppSettingsDialogActions(
     val onUpdateContrast: (ThemeContrast) -> Unit,
     val onUpdateCompactTables: (Boolean) -> Unit,
     val onUpdateLanguage: (AppLanguage) -> Unit,
+    val onUpdateDarkTheme: (DarkThemePreference) -> Unit,
     val onResetDefaults: () -> Unit,
 )
 

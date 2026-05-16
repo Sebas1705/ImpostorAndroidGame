@@ -34,8 +34,6 @@
     {"word":"Turismo Sostenible","clues":["Viaje responsable","Medio ambiente","Cultura local","Conservación","Ecoturismo"],"category":"travel_and_tourism"},
     {"word":"Turismo de Aventura","clues":["Viaje emocionante","Naturaleza","Actividades extremas","Explorar","Adrenalina"],"category":"travel_and_tourism"},
     {"word":"Turismo Cultural","clues":["Viaje educativo","Historia","Arte","Monumentos","Museos"],"category":"travel_and_tourism"},
-    {"word":"Turismo Gastronómico","clues":["Viaje culinario","Comida local","Restaurantes tradicionales","Degustación de platos típicos"],"category":"travel_and_tourism"},
-    {"word":"Turismo Rural","clues":["Viaje al campo","Naturaleza","Pueblos pequeños","Agricultura tradicional"],"category":"travel_and_tourism"},
-    {"word":"Turismo de Sol y Playa","clues":["Vacaciones en la costa","Relajación en la playa ","Actividades acuáticas ","Clima cálido ","Resorts frente al mar "],"category":"travel_and_tourism"},
+    {"word":"Turismo Rural","clues":["Viaje al campo","Naturaleza","Pueblos pequeños","Agricultura tradicional"],"category":"travel_and_tourism"}
   ]
 }

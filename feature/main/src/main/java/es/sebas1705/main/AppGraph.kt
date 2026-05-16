@@ -27,7 +27,9 @@ interface AppGraph: NavKey{
         val categories: ImmutableList<String>,
         val modeName: String,
         val impostors: Int,
-        val showImpostorsInResult: Boolean
+        val showImpostorsInResult: Boolean,
+        val discussionTimerSeconds: Int = 180,
+        val impostorsKnowEachOther: Boolean = false,
     ) : AppGraph
 
 
