@@ -1,15 +1,13 @@
 plugins {
     alias(libs.plugins.buildlogic.data)
-    alias(libs.plugins.buildlogic.firebase)
 }
 
 android {
-    namespace = "es.sebas1705.data.realtime"
+    namespace = "es.sebas1705.data.network"
 }
 
 dependencies {
     api(projects.core.common)
-    api(projects.data.analytics)
     api(projects.domain.models)
     implementation(libs.kotlin.serialization.json)
 }

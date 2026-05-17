@@ -11,6 +11,7 @@ dependencies {
     api(projects.data.analytics)
     api(projects.data.authentication)
     api(projects.data.couchbase)
+    api(projects.data.network)
     api(projects.data.datastore)
     api(projects.data.files)
     api(projects.data.firestore)

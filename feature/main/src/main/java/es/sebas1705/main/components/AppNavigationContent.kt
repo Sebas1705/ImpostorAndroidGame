@@ -29,6 +29,7 @@ import es.sebas1705.main.AppGraph
 import es.sebas1705.models.Categories
 import es.sebas1705.models.Modes
 import es.sebas1705.offlinegame.OfflineGameScreen
+import es.sebas1705.onlinegame.OnlineGameScreen
 import es.sebas1705.splash.SplashScreen
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
@@ -145,7 +146,21 @@ internal fun AppNavigationContent(
                             )
                         )
                     },
+                    onOpenOnlineGame = {
+                        appNavLogI("event open_online_game")
+                        backStack.push(AppGraph.OnlineGameScreen)
+                    },
                     onOpenSettings = onOpenSettings
+                )
+            }
+            entry<AppGraph.OnlineGameScreen> {
+                appNavLogI("render OnlineGameScreen")
+                OnlineGameScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    onBack = {
+                        appNavLogI("event online_back")
+                        backStack.pop()
+                    }
                 )
             }
             entry<AppGraph.OfflineGameScreen> { route ->

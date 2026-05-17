@@ -118,6 +118,7 @@ fun HomeDesign(
         impostorsKnowEachOther: Boolean,
         showNumOfImpostors: Boolean
     ) -> Unit = { _, _, _, _, _, _, _, _ -> },
+    onOpenOnlineGame: () -> Unit = {},
     faceViewModel: FaceViewModel = hiltViewModel()
 ) {
     val faceState by faceViewModel.uiState.collectAsStateWithLifecycle()
@@ -280,6 +281,10 @@ fun HomeDesign(
                                 faceState.impostorsKnowEachOther,
                                 faceState.showNumOfImpostors
                             )
+                        },
+                        onStartOnlineGame = {
+                            homeDesignLogI("start online game")
+                            onOpenOnlineGame()
                         },
                         onOpenSettings = onOpenSettings
                     )

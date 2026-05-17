@@ -173,6 +173,7 @@
     <string name="core_resources_face_mode_summary">%1$s - Impostores: %2$d</string>
     <string name="core_resources_face_open_mode">Abrir ajustes de modo</string>
     <string name="core_resources_face_online_coming_soon">El modo online llegará pronto. Mientras tanto, disfruta el modo offline con tus amigos.</string>
+    <string name="core_resources_face_start_online_game">Iniciar juego online</string>
 
     <string name="core_resources_offline_game_title">Juego offline</string>
     <string name="core_resources_player_progress">Jugador %1$d/%2$d: %3$s</string>

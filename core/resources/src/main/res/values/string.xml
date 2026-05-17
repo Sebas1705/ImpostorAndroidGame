@@ -175,6 +175,7 @@
     <string name="core_resources_face_mode_summary">%1$s - Impostors: %2$d</string>
     <string name="core_resources_face_open_mode">Open mode settings</string>
     <string name="core_resources_face_online_coming_soon">Online mode is coming soon! In the meantime, you can enjoy offline mode with your friends.</string>
+    <string name="core_resources_face_start_online_game">Start online game</string>
 
     <string name="core_resources_offline_game_title">Offline game</string>
     <string name="core_resources_player_progress">Player %1$d/%2$d: %3$s</string>

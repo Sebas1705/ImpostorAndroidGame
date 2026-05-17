@@ -35,6 +35,9 @@ interface AppGraph: NavKey{
 
 
     @Serializable
+    object OnlineGameScreen : AppGraph
+
+    @Serializable
     object DebugToolsScreen : AppGraph
 }
 

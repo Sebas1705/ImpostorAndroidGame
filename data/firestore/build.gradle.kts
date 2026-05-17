@@ -10,4 +10,6 @@ android {
 dependencies {
     api(projects.core.common)
     api(projects.data.analytics)
+    api(projects.domain.models)
+    implementation(libs.kotlin.serialization.json)
 }

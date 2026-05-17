@@ -20,6 +20,7 @@ dependencies {
     api(projects.feature.home.face.nav)
     api(projects.feature.login)
     api(projects.feature.offlinegame)
+    api(projects.feature.onlinegame)
     api(projects.feature.settings)
     api(projects.feature.splash)
 

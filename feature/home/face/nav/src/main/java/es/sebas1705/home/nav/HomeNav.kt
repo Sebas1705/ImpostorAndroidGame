@@ -28,6 +28,7 @@ fun HomeNav(
         impostorsKnowEachOther: Boolean,
         showNumOfImpostors: Boolean
     ) -> Unit = { _, _, _, _, _, _, _, _ -> },
+    onOpenOnlineGame: () -> Unit = {},
 ) {
     val backStack = rememberNavBackStack(HomeGraph.FaceScreen)
 
@@ -41,7 +42,8 @@ fun HomeNav(
         onSignOut = onSignOut,
         onDebugNav = onDebugNav,
         onOpenSettings = onOpenSettings,
-        onOpenOfflineGame = onOpenOfflineGame
+        onOpenOfflineGame = onOpenOfflineGame,
+        onOpenOnlineGame = onOpenOnlineGame,
     )
 }
 

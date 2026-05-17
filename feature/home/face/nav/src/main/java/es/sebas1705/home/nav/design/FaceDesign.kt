@@ -61,6 +61,7 @@ fun FaceDesign(
     onOpenCategories: () -> Unit = {},
     onOpenMode: () -> Unit = {},
     onStartOfflineGame: () -> Unit = {},
+    onStartOnlineGame: () -> Unit = {},
     onOpenSettings: () -> Unit = {}
 ) {
     val selectedOffline = rememberSaveable { mutableStateOf(true) }
@@ -137,12 +138,21 @@ fun FaceDesign(
                             }
                         }
                         if (!selectedOffline.value) {
-                            item(contentType = "online_soon") {
-                                Text(
-                                    text = stringResource(R.string.core_resources_face_online_coming_soon),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onBackground
-                                )
+                            item(contentType = "online_start") {
+                                FilledTonalButton(
+                                    onClick = onStartOnlineGame,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.CloudQueue,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.core_resources_face_start_online_game),
+                                        modifier = Modifier.padding(start = 6.dp)
+                                    )
+                                }
                             }
                         }
                         if (!faceState.errorMessage.isNullOrBlank()) {
@@ -279,11 +289,20 @@ fun FaceDesign(
                         }
                     } else {
                         item(contentType = "contentType9") {
-                            Text(
-                                text = stringResource(R.string.core_resources_face_online_coming_soon),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
+                            FilledTonalButton(
+                                onClick = onStartOnlineGame,
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.CloudQueue,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Text(
+                                    text = stringResource(R.string.core_resources_face_start_online_game),
+                                    modifier = Modifier.padding(start = 6.dp)
+                                )
+                            }
                         }
                     }
                     if (!faceState.errorMessage.isNullOrBlank()) {
