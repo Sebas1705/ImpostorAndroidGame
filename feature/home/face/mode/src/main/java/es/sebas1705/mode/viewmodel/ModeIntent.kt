@@ -10,6 +10,7 @@ sealed interface ModeIntent : MVIBaseIntent {
         val showImpostorsInResult: Boolean,
         val discussionTimerSeconds: Int,
         val impostorsKnowEachOther: Boolean,
+        val showNumOfImpostors: Boolean,
     ) : ModeIntent
 }
 

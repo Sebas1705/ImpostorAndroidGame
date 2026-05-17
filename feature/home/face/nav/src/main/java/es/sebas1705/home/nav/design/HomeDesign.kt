@@ -50,6 +50,7 @@ import es.sebas1705.home.nav.viewmodel.FaceViewModel
 import es.sebas1705.home.profile.ProfileScreen
 import es.sebas1705.home.ranking.RankingScreen
 import es.sebas1705.mode.ModeFullScreenDialog
+import kotlinx.collections.immutable.toImmutableList
 
 private const val HOME_NAV_ANIMATION_DURATION_MS = 240
 private const val HOME_DESIGN_LOG_TAG = "HomeDesignFlow"
@@ -114,11 +115,13 @@ fun HomeDesign(
         impostors: Int,
         showImpostorsInResult: Boolean,
         discussionTimerSeconds: Int,
-        impostorsKnowEachOther: Boolean
-    ) -> Unit = { _, _, _, _, _, _, _ -> },
+        impostorsKnowEachOther: Boolean,
+        showNumOfImpostors: Boolean
+    ) -> Unit = { _, _, _, _, _, _, _, _ -> },
     faceViewModel: FaceViewModel = hiltViewModel()
 ) {
     val faceState by faceViewModel.uiState.collectAsStateWithLifecycle()
+    val faceLoading by faceViewModel.loading.collectAsStateWithLifecycle()
     val showCategoriesDialog = rememberSaveable { mutableStateOf(false) }
     val showUsersDialog = rememberSaveable { mutableStateOf(false) }
     val showModeDialog = rememberSaveable { mutableStateOf(false) }
@@ -135,7 +138,7 @@ fun HomeDesign(
     LaunchedEffect(showCategoriesDialog.value, showUsersDialog.value, showModeDialog.value) {
         homeDesignLogD(
             "dialogs categories=${showCategoriesDialog.value} users=${showUsersDialog.value} " +
-                "mode=${showModeDialog.value}"
+                    "mode=${showModeDialog.value}"
         )
     }
 
@@ -242,6 +245,7 @@ fun HomeDesign(
                 entry<HomeGraph.FaceScreen> {
                     FaceScreen(
                         faceState = faceState,
+                        isLoading = faceLoading,
                         onOpenUser = {
                             homeDesignLogD("open users dialog")
                             showUsersDialog.value = true
@@ -257,11 +261,11 @@ fun HomeDesign(
                         onStartOfflineGame = {
                             homeDesignLogI(
                                 "start offline game users=${faceState.users.size} " +
-                                    "selectedCategories=${faceState.categoriesStates.count { it.value }} " +
-                                    "mode=${faceState.mode} impostors=${faceState.impostors} " +
-                                    "showImpostorsInResult=${faceState.showImpostorsInResult} " +
-                                    "timer=${faceState.discussionTimerSeconds} " +
-                                    "impostorsKnow=${faceState.impostorsKnowEachOther}"
+                                        "selectedCategories=${faceState.categoriesStates.count { it.value }} " +
+                                        "mode=${faceState.mode} impostors=${faceState.impostors} " +
+                                        "showImpostorsInResult=${faceState.showImpostorsInResult} " +
+                                        "timer=${faceState.discussionTimerSeconds} " +
+                                        "impostorsKnow=${faceState.impostorsKnowEachOther}"
                             )
                             onOpenOfflineGame(
                                 faceState.users.toList(),
@@ -273,7 +277,8 @@ fun HomeDesign(
                                 faceState.impostors,
                                 faceState.showImpostorsInResult,
                                 faceState.discussionTimerSeconds,
-                                faceState.impostorsKnowEachOther
+                                faceState.impostorsKnowEachOther,
+                                faceState.showNumOfImpostors
                             )
                         },
                         onOpenSettings = onOpenSettings
@@ -311,11 +316,7 @@ fun HomeDesign(
 
         if (showModeDialog.value)
             ModeFullScreenDialog(
-                mode = faceState.mode,
-                impostors = faceState.impostors,
-                showImpostorsInResult = faceState.showImpostorsInResult,
-                discussionTimerSeconds = faceState.discussionTimerSeconds,
-                impostorsKnowEachOther = faceState.impostorsKnowEachOther,
+                faceState = faceState,
                 onDismiss = {
                     homeDesignLogD("dismiss mode dialog")
                     showModeDialog.value = false

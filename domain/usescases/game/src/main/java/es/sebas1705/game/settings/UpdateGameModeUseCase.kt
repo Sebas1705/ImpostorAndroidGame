@@ -13,12 +13,14 @@ class UpdateGameModeUseCase @Inject constructor(
         showImpostorsInResult: Boolean,
         discussionTimerSeconds: Int,
         impostorsKnowEachOther: Boolean,
+        showNumOfImpostors: Boolean
     ) = gameRepository.updateMode(
         mode.name,
         impostors,
         showImpostorsInResult,
         discussionTimerSeconds,
         impostorsKnowEachOther,
+        showNumOfImpostors
     )
 }
 

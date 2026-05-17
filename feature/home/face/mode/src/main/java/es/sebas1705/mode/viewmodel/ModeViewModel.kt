@@ -32,6 +32,7 @@ class ModeViewModel @Inject constructor(
                 intent.showImpostorsInResult,
                 intent.discussionTimerSeconds,
                 intent.impostorsKnowEachOther,
+                intent.showNumOfImpostors
             )
         }.onFailure { logW("save failed: ${it.message}") }
     }

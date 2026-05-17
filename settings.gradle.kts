@@ -60,7 +60,7 @@ include(":domain:usescases:settings")
 
 include(":feature")
 include(":feature:main")
-include(":feature:home:face")
+include(":feature:home:face:common")
 include(":feature:home:face:nav")
 include(":feature:home:face:categories")
 include(":feature:home:face:users")

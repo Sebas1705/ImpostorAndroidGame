@@ -14,5 +14,7 @@ dependencies {
     api(projects.domain.models)
     api(projects.domain.usescases.game)
     implementation(libs.lottie.compose)
+
+    api(projects.feature.home.face.common)
 }
 

@@ -22,6 +22,11 @@ class RankingViewModel @Inject constructor(
         offlineSort = readSavedRankingSort(savedStateHandle)
     )
 
+    override fun onInit() {
+        super.onInit()
+        startLoading()
+    }
+
     override fun intentHandler(intent: RankingIntent) =
         when (intent) {
             RankingIntent.Load -> loadOfflineRanking()
@@ -30,14 +35,15 @@ class RankingViewModel @Inject constructor(
         }
 
     private fun loadOfflineRanking() = execute(Dispatchers.IO) {
-        updateUi { it.copy(isLoading = true, errorMessage = null) }
+        startLoading()
+        updateUi { it.copy(errorMessage = null) }
 
         runCatching { readOfflineRankingUseCase() }
             .onSuccess { entries ->
                 val currentSort = uiState.value.offlineSort
+                stopLoading()
                 updateUi {
                     it.copy(
-                        isLoading = false,
                         offlineRows = sortOfflineRows(
                             rows = entries.mapIndexed { index, entry ->
                             OfflineRankingRowUi(
@@ -54,12 +60,8 @@ class RankingViewModel @Inject constructor(
                 }
             }
             .onFailure { throwable ->
-                updateUi {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = throwable.message
-                    )
-                }
+                stopLoading()
+                updateUi { it.copy(errorMessage = throwable.message) }
             }
     }
 

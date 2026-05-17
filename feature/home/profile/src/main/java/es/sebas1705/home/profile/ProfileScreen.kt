@@ -18,6 +18,7 @@ fun ProfileScreen(
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by profileViewModel.uiState.collectAsStateWithLifecycle()
+    val loading by profileViewModel.loading.collectAsStateWithLifecycle()
 
     LaunchedEffect(null) {
         profileViewModel.eventHandler(ProfileIntent.Load)
@@ -33,7 +34,7 @@ fun ProfileScreen(
     ProfileDesign(
         modifier = modifier,
         selectedTab = uiState.selectedTab,
-        isLoadingOfflineRecords = uiState.isLoadingOfflineRecords,
+        isLoadingOfflineRecords = loading,
         offlineRecordRows = uiState.offlineRecordRows,
         offlineRecordSort = uiState.offlineRecordSort,
         rolePreference = uiState.rolePreference,

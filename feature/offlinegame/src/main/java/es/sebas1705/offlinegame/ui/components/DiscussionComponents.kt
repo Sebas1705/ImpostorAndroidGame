@@ -175,18 +175,30 @@ internal fun DiscussionFeedbackCard(feedback: String) {
 }
 
 @Composable
-internal fun GuessWordInput(value: String, onValueChange: (String) -> Unit) {
+internal fun GuessWordInput(
+    value: String,
+    onValueChange: (String) -> Unit,
+    enabled: Boolean = true
+) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(stringResource(R.string.core_resources_guess_word_label)) }
+        label = { Text(stringResource(R.string.core_resources_guess_word_label)) },
+        enabled = enabled
     )
 }
 
 @Composable
-internal fun GuessWordButton(onClick: () -> Unit) {
-    OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+internal fun GuessWordButton(
+    onClick: () -> Unit,
+    enabled: Boolean = true
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        enabled = enabled,
+    ) {
         Text(stringResource(R.string.core_resources_guess_word_button))
     }
 }

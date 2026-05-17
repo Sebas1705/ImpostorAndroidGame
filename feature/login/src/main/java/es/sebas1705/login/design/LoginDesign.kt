@@ -1,6 +1,7 @@
 package es.sebas1705.login.design
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -35,6 +36,7 @@ fun LoginDesign(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.SpaceEvenly,

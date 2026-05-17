@@ -12,4 +12,5 @@ message GamePreferences {
     bool show_impostors_in_result = 6;
     int32 discussion_timer_seconds = 7;
     bool impostors_know_each_other = 8;
+    bool show_num_of_impostors = 9;
 }

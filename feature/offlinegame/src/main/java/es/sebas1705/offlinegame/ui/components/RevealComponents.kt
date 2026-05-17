@@ -87,7 +87,11 @@ internal fun RevealProgressDots(currentRevealIndex: Int, totalPlayers: Int) {
 }
 
 @Composable
-internal fun RevealGameInfoBar(totalPlayers: Int, impostorCount: Int) {
+internal fun RevealGameInfoBar(
+    totalPlayers: Int,
+    impostorCount: Int,
+    showImpostorCount: Boolean
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
@@ -103,7 +107,7 @@ internal fun RevealGameInfoBar(totalPlayers: Int, impostorCount: Int) {
                 )
             }
         )
-        AssistChip(
+        if(showImpostorCount) AssistChip(
             onClick = {},
             label = { Text(stringResource(R.string.core_resources_info_impostors, impostorCount)) },
             leadingIcon = {
@@ -204,6 +208,11 @@ private fun RevealCardContent(
     word: String,
     rotationY: Float
 ) {
+    val otherImpostorNames = if (isImpostor && uiState.impostorsKnowEachOther) {
+        (uiState.impostorPlayerIndexes - uiState.currentRevealIndex)
+            .mapNotNull { uiState.players.getOrNull(it) }
+    } else emptyList()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -245,6 +254,17 @@ private fun RevealCardContent(
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
+            if (otherImpostorNames.isNotEmpty()) {
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = stringResource(
+                        R.string.core_resources_impostor_teammates,
+                        otherImpostorNames.joinToString(", ")
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
         }
     }
 }

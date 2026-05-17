@@ -12,6 +12,7 @@ dependencies {
     api(projects.core.designsystem)
     api(projects.core.resources)
 
+    api(projects.feature.home.face.common)
     api(projects.feature.home.face.categories)
     api(projects.feature.home.face.users)
     api(projects.feature.home.face.mode)

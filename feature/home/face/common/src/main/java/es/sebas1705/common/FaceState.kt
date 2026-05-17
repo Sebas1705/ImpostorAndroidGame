@@ -1,4 +1,4 @@
-package es.sebas1705.home.nav.viewmodel
+package es.sebas1705.common
 
 import es.sebas1705.common.mvi.MVIBaseState
 import es.sebas1705.models.Categories
@@ -16,6 +16,6 @@ data class FaceState(
     val showImpostorsInResult: Boolean = true,
     val discussionTimerSeconds: Int = 180,
     val impostorsKnowEachOther: Boolean = false,
+    val showNumOfImpostors: Boolean = false,
     val errorMessage: String? = null
 ) : MVIBaseState
-

@@ -10,7 +10,6 @@ data class ProfileState(
     val navigateToLogin: Boolean = false,
     val errorMessage: String? = null,
     val selectedTab: ProfileTab = ProfileTab.OfflineRecord,
-    val isLoadingOfflineRecords: Boolean = false,
     val offlineRecordRows: ImmutableList<OfflineProfileRecordRowUi> = persistentListOf(),
     val offlineRecordSort: ProfileOfflineRecordSort = ProfileOfflineRecordSort(),
     val rolePreference: ProfileRolePreference = ProfileRolePreference.ImpostorHunter,

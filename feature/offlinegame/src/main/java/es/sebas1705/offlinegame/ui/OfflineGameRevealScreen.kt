@@ -47,9 +47,9 @@ private val LANDSCAPE_BREAKPOINT = 600.dp
 @Composable
 internal fun OfflineGameRevealScreen(
     uiState: OfflineGameState,
-    modifier: Modifier = Modifier,
     onRevealDone: () -> Unit,
-    onNextRevealPlayer: () -> Unit
+    onNextRevealPlayer: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val playerIndex = uiState.currentRevealIndex
     val isImpostor = playerIndex in uiState.impostorPlayerIndexes
@@ -100,7 +100,8 @@ internal fun OfflineGameRevealScreen(
                         )
                         RevealGameInfoBar(
                             totalPlayers = uiState.players.size,
-                            impostorCount = uiState.impostorPlayerIndexes.size
+                            impostorCount = uiState.impostorPlayerIndexes.size,
+                            showImpostorCount = uiState.showNumOfImpostors
                         )
                         RevealContinueButton(
                             hasMoreRevealPlayers = uiState.hasMoreRevealPlayers,
@@ -161,7 +162,8 @@ internal fun OfflineGameRevealScreen(
                     Spacer(Modifier.weight(1f))
                     RevealGameInfoBar(
                         totalPlayers = uiState.players.size,
-                        impostorCount = uiState.impostorPlayerIndexes.size
+                        impostorCount = uiState.impostorPlayerIndexes.size,
+                        showImpostorCount = uiState.showNumOfImpostors
                     )
                     Spacer(Modifier.height(8.dp))
                     RevealContinueButton(

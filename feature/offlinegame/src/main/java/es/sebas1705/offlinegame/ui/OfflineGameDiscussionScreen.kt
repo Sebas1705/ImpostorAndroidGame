@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -57,14 +56,18 @@ internal fun OfflineGameDiscussionScreen(
 ) {
     val timerSeconds = uiState.discussionTimerSeconds
     var guessValue by rememberSaveable { mutableStateOf("") }
-    var secondsLeft by remember { mutableIntStateOf(timerSeconds) }
+    var secondsLeft by rememberSaveable { mutableIntStateOf(timerSeconds) }
+    var enabledAnswer by remember(secondsLeft) { mutableStateOf(timerSeconds == 0 || secondsLeft > 0) }
     val haptic = LocalHapticFeedback.current
 
-    LaunchedEffect(Unit) {
-        if (timerSeconds <= 0) return@LaunchedEffect
-        while (secondsLeft > 0) {
+    LaunchedEffect(null) {
+        screenLogD("Discussion timer tick: $secondsLeft seconds left of $timerSeconds")
+        if (timerSeconds <= 0)
+            return@LaunchedEffect
+        while (secondsLeft >= 1) {
             delay(1000L)
             secondsLeft--
+            screenLogD("Discussion timer tick: $secondsLeft seconds left of $timerSeconds")
             if (secondsLeft == 30 || secondsLeft == 10) {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             }
@@ -74,8 +77,12 @@ internal fun OfflineGameDiscussionScreen(
     LaunchedEffect(uiState.alivePlayerIndexes.size, uiState.guessFeedback) {
         screenLogD(
             "discussion phase alive=${uiState.alivePlayerIndexes.size} " +
-                "feedback=${uiState.guessFeedback.orEmpty()}"
+                    "feedback=${uiState.guessFeedback.orEmpty()}"
         )
+    }
+
+    LaunchedEffect(enabledAnswer) {
+        screenLogD("Discussion phase enabledAnswer=$enabledAnswer")
     }
 
     BoxWithConstraints(modifier = modifier) {
@@ -89,7 +96,10 @@ internal fun OfflineGameDiscussionScreen(
                         .padding(end = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    DiscussionTimer(secondsLeft = secondsLeft, totalSeconds = timerSeconds)
+                    DiscussionTimer(
+                        secondsLeft = secondsLeft,
+                        totalSeconds = timerSeconds
+                    )
                     DiscussionSessionChips(
                         totalPlayers = uiState.players.size,
                         alivePlayers = uiState.alivePlayerIndexes.size,
@@ -103,8 +113,15 @@ internal fun OfflineGameDiscussionScreen(
                     if (!uiState.guessFeedback.isNullOrBlank()) {
                         DiscussionFeedbackCard(uiState.guessFeedback)
                     }
-                    GuessWordInput(value = guessValue, onValueChange = { guessValue = it })
-                    GuessWordButton(onClick = { onGuess(guessValue) })
+                    GuessWordInput(
+                        value = guessValue,
+                        onValueChange = { guessValue = it },
+                        enabled = enabledAnswer
+                    )
+                    GuessWordButton(
+                        onClick = { onGuess(guessValue) },
+                        enabled = enabledAnswer
+                    )
                     if (BuildConfig.DEBUG) {
                         DebugVotesSummary(
                             correctVotes = uiState.correctVotes,
@@ -167,10 +184,17 @@ internal fun OfflineGameDiscussionScreen(
                     item(contentType = "contentType2") { DiscussionFeedbackCard(uiState.guessFeedback) }
                 }
                 item(contentType = "contentType3") {
-                    GuessWordInput(value = guessValue, onValueChange = { guessValue = it })
+                    GuessWordInput(
+                        value = guessValue,
+                        onValueChange = { guessValue = it },
+                        enabled = enabledAnswer
+                    )
                 }
                 item(contentType = "contentType4") {
-                    GuessWordButton(onClick = { onGuess(guessValue) })
+                    GuessWordButton(
+                        onClick = { onGuess(guessValue) },
+                        enabled = enabledAnswer
+                    )
                 }
                 item(contentType = "contentType5") { VoteSectionHeader() }
                 itemsIndexed(

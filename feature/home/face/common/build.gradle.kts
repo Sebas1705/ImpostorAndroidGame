@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "es.sebas1705.feature.home.face.categories"
+    namespace = "es.sebas1705.feature.home.face.common"
 }
 
 dependencies {
@@ -13,7 +13,5 @@ dependencies {
     api(projects.domain.models)
     api(projects.domain.usescases.game)
     implementation(libs.lottie.compose)
-
-    api(projects.feature.home.face.common)
 }
 

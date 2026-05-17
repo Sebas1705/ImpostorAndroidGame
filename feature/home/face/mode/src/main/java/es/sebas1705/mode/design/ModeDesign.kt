@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import es.sebas1705.common.FaceState
 import es.sebas1705.common.utlis.UiModePreviews
 import es.sebas1705.core.resources.R
 import es.sebas1705.models.Modes
@@ -46,19 +47,17 @@ private const val TIMER_STEP_SECONDS = 30
 @Suppress("LongMethod")
 fun ModeDesign(
     modifier: Modifier = Modifier,
-    mode: Modes = Modes.Classic,
-    impostors: Int = 1,
-    showImpostorsInResult: Boolean = true,
-    discussionTimerSeconds: Int = 180,
-    impostorsKnowEachOther: Boolean = false,
-    onSave: (mode: Modes, impostors: Int, showImpostorsInResult: Boolean, discussionTimerSeconds: Int, impostorsKnowEachOther: Boolean) -> Unit = { _, _, _, _, _ -> },
-    onBack: () -> Unit = {},
+    faceState: FaceState = FaceState(),
+    onSave: (mode: Modes, impostors: Int, showImpostorsInResult: Boolean, discussionTimerSeconds: Int, impostorsKnowEachOther: Boolean, selectedShowNumOfImpostors: Boolean) -> Unit = { _, _, _, _, _, _ -> },
+    onBack: () -> Unit = {}
 ) {
-    val selectedModeName = rememberSaveable { mutableStateOf(mode.name) }
-    val selectedImpostors = rememberSaveable { mutableIntStateOf(impostors.coerceAtLeast(1)) }
-    val selectedShowImpostorsInResult = rememberSaveable { mutableStateOf(showImpostorsInResult) }
-    val selectedTimerSeconds = rememberSaveable { mutableIntStateOf(discussionTimerSeconds.coerceAtLeast(0)) }
-    val selectedImpostorsKnowEachOther = rememberSaveable { mutableStateOf(impostorsKnowEachOther) }
+    val selectedModeName = rememberSaveable { mutableStateOf(faceState.mode.name) }
+    val selectedImpostors = rememberSaveable { mutableIntStateOf(faceState.impostors.coerceAtLeast(1)) }
+    val selectedShowImpostorsInResult = rememberSaveable { mutableStateOf(faceState.showImpostorsInResult) }
+    val selectedTimerSeconds =
+        rememberSaveable { mutableIntStateOf(faceState.discussionTimerSeconds.coerceAtLeast(0)) }
+    val selectedImpostorsKnowEachOther = rememberSaveable { mutableStateOf(faceState.impostorsKnowEachOther) }
+    val selectedShowNumOfImpostors = rememberSaveable { mutableStateOf(faceState.showNumOfImpostors) }
 
     Scaffold(
         modifier = modifier
@@ -87,7 +86,8 @@ fun ModeDesign(
                         selectedImpostors.intValue,
                         selectedShowImpostorsInResult.value,
                         selectedTimerSeconds.intValue,
-                        selectedImpostorsKnowEachOther.value
+                        selectedImpostorsKnowEachOther.value,
+                        selectedShowNumOfImpostors.value
                     )
                 },
                 modifier = Modifier
@@ -105,16 +105,19 @@ fun ModeDesign(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item {
+            item(contentType = "contentType1") {
                 Text(
                     text = stringResource(R.string.core_resources_game_mode_select_mode),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
 
-            item {
+            item(contentType = "contentType2") {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    items(Modes.entries) { option ->
+                    items(
+                        items = Modes.entries,
+                        key = { option -> option.name },
+                        contentType = { _ -> "contentType1" }) { option ->
                         val isSelected = selectedModeName.value == option.name
                         Card(
                             onClick = { selectedModeName.value = option.name },
@@ -138,6 +141,7 @@ fun ModeDesign(
                                         Modes.Classic -> stringResource(
                                             R.string.core_resources_game_mode_classic_name
                                         )
+
                                         Modes.Chaos -> stringResource(
                                             R.string.core_resources_game_mode_chaos_name
                                         )
@@ -149,6 +153,7 @@ fun ModeDesign(
                                         Modes.Classic -> stringResource(
                                             R.string.core_resources_game_mode_classic_desc
                                         )
+
                                         Modes.Chaos -> stringResource(
                                             R.string.core_resources_game_mode_chaos_desc
                                         )
@@ -161,14 +166,14 @@ fun ModeDesign(
                 }
             }
 
-            item {
+            item(contentType = "contentType4") {
                 Text(
                     text = stringResource(R.string.core_resources_game_mode_impostors),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
 
-            item {
+            item(contentType = "contentType5") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -193,7 +198,10 @@ fun ModeDesign(
                     )
 
                     IconButton(
-                        onClick = { selectedImpostors.intValue += 1 }
+                        onClick = {
+                            selectedImpostors.intValue += 1
+                        },
+                        enabled = (selectedImpostors.intValue + 1) != faceState.users.size
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Add,
@@ -203,14 +211,14 @@ fun ModeDesign(
                 }
             }
 
-            item {
+            item(contentType = "contentType6") {
                 Text(
                     text = stringResource(R.string.core_resources_game_mode_timer),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
 
-            item {
+            item(contentType = "contentType7") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -233,7 +241,10 @@ fun ModeDesign(
                         text = if (selectedTimerSeconds.intValue == 0)
                             stringResource(R.string.core_resources_game_mode_timer_no_limit)
                         else
-                            stringResource(R.string.core_resources_game_mode_timer_seconds, selectedTimerSeconds.intValue),
+                            stringResource(
+                                R.string.core_resources_game_mode_timer_seconds,
+                                selectedTimerSeconds.intValue
+                            ),
                         style = MaterialTheme.typography.headlineSmall
                     )
 
@@ -248,14 +259,14 @@ fun ModeDesign(
                 }
             }
 
-            item {
+            item(contentType = "contentType8") {
                 Text(
                     text = stringResource(R.string.core_resources_game_mode_post_game),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
 
-            item {
+            item(contentType = "contentType9") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -282,7 +293,7 @@ fun ModeDesign(
                 }
             }
 
-            item {
+            item(contentType = "contentType10") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -305,6 +316,33 @@ fun ModeDesign(
                     Switch(
                         checked = selectedImpostorsKnowEachOther.value,
                         onCheckedChange = { selectedImpostorsKnowEachOther.value = it }
+                    )
+                }
+            }
+
+            item(contentType = "contentType11") {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.core_resources_game_mode_num_impostors_know),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = stringResource(R.string.core_resources_game_mode_num_impostors_know_desc),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Switch(
+                        checked = selectedShowNumOfImpostors.value,
+                        onCheckedChange = { selectedShowNumOfImpostors.value = it }
                     )
                 }
             }

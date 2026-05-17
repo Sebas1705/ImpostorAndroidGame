@@ -99,6 +99,7 @@ class GamePreferencesDataSource @Inject constructor(
         showImpostorsInResult: Boolean,
         discussionTimerSeconds: Int,
         impostorsKnowEachOther: Boolean,
+        showNumOfImpostors: Boolean
     ) = gamePreferences.updateData {
         it.toBuilder()
             .setMode(mode)
@@ -106,13 +107,14 @@ class GamePreferencesDataSource @Inject constructor(
             .setShowImpostorsInResult(showImpostorsInResult)
             .setDiscussionTimerSeconds(discussionTimerSeconds.coerceAtLeast(0))
             .setImpostorsKnowEachOther(impostorsKnowEachOther)
+            .setShowNumOfImpostors(showNumOfImpostors)
             .build()
     }
 
     fun getGameData() = gameData
 
     private companion object {
-        val DEFAULT_PLAYERS = listOf("Player1", "Player2")
+        val DEFAULT_PLAYERS = listOf("Player1", "Player2", "Player3", "Player4")
         // Must match Modes.Classic.name — keep in sync if the enum is renamed
         const val DEFAULT_MODE = "Classic"
         const val DEFAULT_IMPOSTORS = 1

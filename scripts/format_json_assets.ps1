@@ -40,7 +40,7 @@ $totalFinal = 0
 $stats = @()
 
 foreach ($file in $files) {
-    # Write-Host "Procesando: $($file.Name)"
+    Write-Host "Procesando: $($file.Name)"
 
     $categoryName = $file.BaseName -replace '_(es|en)$', ''
     $content = [System.IO.File]::ReadAllText($file.FullName, [System.Text.Encoding]::UTF8)
@@ -61,28 +61,18 @@ foreach ($file in $files) {
         $totalOriginal += $countOriginal
 
         $processedWords = @()
-        $index = 0
 
         foreach ($rawObj in $json.words) {
             # --- VALIDACIÓN ULTRA-ESTRICTA ---
-            $props = $rawObj.PSObject.Properties.Name
+            # Comprobar que existen los campos mínimos requeridos por el modelo Kotlin
+            $hasWord = $rawObj.PSObject.Properties.Name -contains "word"
+            $hasClues = $rawObj.PSObject.Properties.Name -contains "clues"
 
-            if ($props -notcontains "word") {
-                Write-Warning "$($file.Name): Word at index $index missing 'word' field."
-                $index++; continue
-            }
-            if ($props -notcontains "clues") {
-                Write-Warning "$($file.Name): Word '$($rawObj.word)' at index $index missing 'clues' field."
-                $index++; continue
-            }
-
-            if ($null -eq $rawObj.word -or $null -eq $rawObj.clues) {
-                 Write-Warning "$($file.Name): Word at index $index has null values."
-                 $index++; continue
-            }
+            if (-not $hasWord -or -not $hasClues) { continue }
+            if ($null -eq $rawObj.word -or $null -eq $rawObj.clues) { continue }
 
             $wordStr = $rawObj.word.ToString().Trim()
-            if ($wordStr -eq "" -or ($wordStr -split '\s+').Length -gt 3) { $index++; continue }
+            if ($wordStr -eq "" -or ($wordStr -split '\s+').Length -gt 3) { continue }
 
             # Limpiar pistas
             $cleanClues = @()
@@ -94,16 +84,15 @@ foreach ($file in $files) {
                 }
             }
 
-            if ($cleanClues.Count -eq 0) { $index++; continue }
+            if ($cleanClues.Count -eq 0) { continue }
 
-            # RECONSTRUCCIÓN MANUAL
+            # RECONSTRUCCIÓN MANUAL del objeto para asegurar el orden y la presencia de campos
             $finalObj = [Ordered]@{
                 word = $wordStr
                 clues = $cleanClues
                 category = $categoryName
             }
             $processedWords += New-Object PSObject -Property $finalObj
-            $index++
         }
 
         # DEDUPLICACIÓN
@@ -136,10 +125,12 @@ foreach ($file in $files) {
 }
 
 Write-Host "`n" + ("=" * 60)
-Write-Host "RESUMEN DE INTEGRIDAD"
+Write-Host "RESUMEN DE INTEGRIDAD DEL BANCO DE PALABRAS"
 Write-Host ("=" * 60)
 $stats | Format-Table -AutoSize
 Write-Host ("-" * 60)
 Write-Host "TOTAL PALABRAS ORIGINALES: $totalOriginal"
 Write-Host "TOTAL PALABRAS FINALES:    $totalFinal"
+Write-Host "TOTAL ELIMINADAS (ERROR):  $($totalOriginal - $totalFinal)"
 Write-Host ("=" * 60)
+Write-Host "¡Listo! Todos los JSON son ahora 100% compatibles con el modelo de la app."

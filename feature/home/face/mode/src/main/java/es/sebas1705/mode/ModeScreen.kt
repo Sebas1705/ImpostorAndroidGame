@@ -5,30 +5,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import es.sebas1705.common.FaceState
 import es.sebas1705.mode.design.ModeDesign
 import es.sebas1705.mode.viewmodel.ModeIntent
 import es.sebas1705.mode.viewmodel.ModeViewModel
 import es.sebas1705.models.Modes
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun ModeScreen(
-    mode: Modes,
-    impostors: Int,
-    showImpostorsInResult: Boolean,
-    discussionTimerSeconds: Int,
-    impostorsKnowEachOther: Boolean,
+    faceState: FaceState,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     modeViewModel: ModeViewModel = hiltViewModel()
 ) {
     ModeDesign(
         modifier = modifier,
-        mode = mode,
-        impostors = impostors,
-        showImpostorsInResult = showImpostorsInResult,
-        discussionTimerSeconds = discussionTimerSeconds,
-        impostorsKnowEachOther = impostorsKnowEachOther,
-        onSave = { selectedMode, selectedImpostors, selectedShowImpostorsInResult, selectedTimer, selectedKnow ->
+        faceState = faceState,
+        onSave = { selectedMode, selectedImpostors, selectedShowImpostorsInResult, selectedTimer, selectedKnow, selectedShowNumOfImpostors ->
             modeViewModel.eventHandler(
                 ModeIntent.Save(
                     mode = selectedMode,
@@ -36,6 +30,7 @@ fun ModeScreen(
                     showImpostorsInResult = selectedShowImpostorsInResult,
                     discussionTimerSeconds = selectedTimer,
                     impostorsKnowEachOther = selectedKnow,
+                    showNumOfImpostors = selectedShowNumOfImpostors
                 )
             )
             onBack()
@@ -47,11 +42,7 @@ fun ModeScreen(
 @Composable
 fun ModeFullScreenDialog(
     onDismiss: () -> Unit,
-    mode: Modes,
-    impostors: Int,
-    showImpostorsInResult: Boolean,
-    discussionTimerSeconds: Int,
-    impostorsKnowEachOther: Boolean,
+    faceState: FaceState,
 ) {
     Dialog(
         onDismissRequest = onDismiss,
@@ -61,11 +52,7 @@ fun ModeFullScreenDialog(
         )
     ) {
         ModeScreen(
-            mode = mode,
-            impostors = impostors,
-            showImpostorsInResult = showImpostorsInResult,
-            discussionTimerSeconds = discussionTimerSeconds,
-            impostorsKnowEachOther = impostorsKnowEachOther,
+            faceState = faceState,
             modifier = Modifier,
             onBack = onDismiss,
         )

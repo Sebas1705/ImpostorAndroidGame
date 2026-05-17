@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -27,6 +26,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.outlined.TimerOff
 import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -43,11 +43,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import es.sebas1705.common.FaceState
 import es.sebas1705.common.utlis.UiModePreviews
 import es.sebas1705.core.resources.R
 import es.sebas1705.home.nav.components.GameCoverCard
 import es.sebas1705.home.nav.components.ModeCard
-import es.sebas1705.home.nav.viewmodel.FaceState
 import es.sebas1705.ui.theme.AppTheme
 import es.sebas1705.ui.theme.makeTitle
 
@@ -56,6 +56,7 @@ import es.sebas1705.ui.theme.makeTitle
 fun FaceDesign(
     modifier: Modifier = Modifier,
     faceState: FaceState = FaceState(),
+    isLoading: Boolean = false,
     onOpenUser: () -> Unit = {},
     onOpenCategories: () -> Unit = {},
     onOpenMode: () -> Unit = {},
@@ -76,6 +77,18 @@ fun FaceDesign(
             }
         }
     ) { paddingValues ->
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+            return@Scaffold
+        }
+
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
@@ -100,7 +113,9 @@ fun FaceDesign(
                         }
                         item(contentType = "mode_selector") {
                             Row(
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 ModeCard(
@@ -132,7 +147,10 @@ fun FaceDesign(
                         }
                         if (!faceState.errorMessage.isNullOrBlank()) {
                             item(contentType = "error") {
-                                Text(text = faceState.errorMessage, color = MaterialTheme.colorScheme.error)
+                                Text(
+                                    text = faceState.errorMessage!!,
+                                    color = MaterialTheme.colorScheme.error
+                                )
                             }
                         }
                     }
@@ -157,8 +175,18 @@ fun FaceDesign(
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
-                            item(contentType = "cat_card") { FaceCategoriesCard(faceState, onOpenCategories) }
-                            item(contentType = "users_card") { FaceUsersCard(faceState, onOpenUser) }
+                            item(contentType = "cat_card") {
+                                FaceCategoriesCard(
+                                    faceState,
+                                    onOpenCategories
+                                )
+                            }
+                            item(contentType = "users_card") {
+                                FaceUsersCard(
+                                    faceState,
+                                    onOpenUser
+                                )
+                            }
                             item(contentType = "mode_card") { FaceModeCard(faceState, onOpenMode) }
                             item(contentType = "readiness") {
                                 GameConfigChips(faceState)
@@ -167,14 +195,18 @@ fun FaceDesign(
                                 FilledTonalButton(
                                     onClick = onStartOfflineGame,
                                     enabled = faceState.users.size >= 3 && faceState.categoriesStates.any { it.value },
-                                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 8.dp)
                                 ) {
                                     Text(stringResource(R.string.core_resources_face_start_offline_game))
                                 }
                             }
                         }
                     } else {
-                        Box(Modifier.weight(1f).fillMaxHeight())
+                        Box(Modifier
+                            .weight(1f)
+                            .fillMaxHeight())
                     }
                 }
             } else {
@@ -192,7 +224,9 @@ fun FaceDesign(
                     }
                     item(contentType = "contentType3") {
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             ModeCard(
@@ -221,7 +255,12 @@ fun FaceDesign(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }
-                        item(contentType = "contentType5") { FaceCategoriesCard(faceState, onOpenCategories) }
+                        item(contentType = "contentType5") {
+                            FaceCategoriesCard(
+                                faceState,
+                                onOpenCategories
+                            )
+                        }
                         item(contentType = "contentType6") { FaceUsersCard(faceState, onOpenUser) }
                         item(contentType = "contentType7") { FaceModeCard(faceState, onOpenMode) }
                         item(contentType = "contentType_readiness") {
@@ -231,7 +270,9 @@ fun FaceDesign(
                             FilledTonalButton(
                                 onClick = onStartOfflineGame,
                                 enabled = faceState.users.size >= 3 && faceState.categoriesStates.any { it.value },
-                                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 8.dp)
                             ) {
                                 Text(stringResource(R.string.core_resources_face_start_offline_game))
                             }
@@ -247,7 +288,10 @@ fun FaceDesign(
                     }
                     if (!faceState.errorMessage.isNullOrBlank()) {
                         item(contentType = "contentType10") {
-                            Text(text = faceState.errorMessage, color = MaterialTheme.colorScheme.error)
+                            Text(
+                                text = faceState.errorMessage!!,
+                                color = MaterialTheme.colorScheme.error
+                            )
                         }
                     }
                 }
@@ -350,7 +394,9 @@ private fun GameConfigChips(faceState: FaceState) {
                 )
             },
             colors = SuggestionChipDefaults.suggestionChipColors(
-                containerColor = if (playersOk) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                containerColor = if (playersOk) MaterialTheme.colorScheme.primaryContainer.copy(
+                    alpha = 0.4f
+                )
                 else MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
             )
         )
@@ -359,7 +405,10 @@ private fun GameConfigChips(faceState: FaceState) {
             label = {
                 Text(
                     text = if (categoriesOk)
-                        stringResource(R.string.core_resources_face_ready_categories, selectedCategories)
+                        stringResource(
+                            R.string.core_resources_face_ready_categories,
+                            selectedCategories
+                        )
                     else stringResource(R.string.core_resources_face_warn_categories)
                 )
             },
@@ -372,7 +421,9 @@ private fun GameConfigChips(faceState: FaceState) {
                 )
             },
             colors = SuggestionChipDefaults.suggestionChipColors(
-                containerColor = if (categoriesOk) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                containerColor = if (categoriesOk) MaterialTheme.colorScheme.primaryContainer.copy(
+                    alpha = 0.4f
+                )
                 else MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
             )
         )
@@ -397,7 +448,10 @@ private fun GameConfigChips(faceState: FaceState) {
                 Text(
                     text = if (faceState.discussionTimerSeconds <= 0)
                         stringResource(R.string.core_resources_game_mode_timer_no_limit)
-                    else stringResource(R.string.core_resources_game_mode_timer_seconds, faceState.discussionTimerSeconds)
+                    else stringResource(
+                        R.string.core_resources_game_mode_timer_seconds,
+                        faceState.discussionTimerSeconds
+                    )
                 )
             },
             icon = {

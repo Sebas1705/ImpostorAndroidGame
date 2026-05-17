@@ -8,5 +8,6 @@ data class GameModel(
     val showImpostorsInResult: Boolean = true,
     val discussionTimerSeconds: Int = 180,
     val impostorsKnowEachOther: Boolean = false,
+    val showNumOfImpostors: Boolean = false,
 )
 

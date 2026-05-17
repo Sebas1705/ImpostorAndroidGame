@@ -11,9 +11,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,6 +27,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowDownward
 import androidx.compose.material.icons.outlined.ArrowUpward
+import androidx.compose.material.icons.outlined.CloudQueue
+import androidx.compose.material.icons.outlined.EmojiEvents
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,9 +40,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import es.sebas1705.common.utlis.UiModePreviews
@@ -51,6 +61,17 @@ import es.sebas1705.ui.theme.AppTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import es.sebas1705.core.resources.R as ResourceR
+
+private val GoldColor = Color(0xFFFFD700)
+private val SilverColor = Color(0xFFB8B8C8)
+private val BronzeColor = Color(0xFFCD8C4A)
+
+private fun medalColor(position: Int): Color? = when (position) {
+    1 -> GoldColor
+    2 -> SilverColor
+    3 -> BronzeColor
+    else -> null
+}
 
 @Composable
 @Suppress("LongMethod")
@@ -70,8 +91,6 @@ fun RankingDesign(
     val tableScrollState = rememberScrollState()
     val tabEdgePadding = if (isCompactPhone) 4.dp else 12.dp
 
-    val title = stringResource(ResourceR.string.core_resources_ranking_title)
-    val subtitle = stringResource(ResourceR.string.core_resources_ranking_subtitle)
     val tabs = listOf(
         RankingTab.Offline to stringResource(ResourceR.string.core_resources_ranking_tab_offline),
         RankingTab.Online to stringResource(ResourceR.string.core_resources_ranking_tab_online)
@@ -88,25 +107,25 @@ fun RankingDesign(
                 .padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item(contentType = "contentType1") {
+            item(contentType = "banner") {
                 RankingBannerCard()
             }
-            item(contentType = "contentType2") {
+            item(contentType = "title") {
                 Text(
-                    text = title,
+                    text = stringResource(ResourceR.string.core_resources_ranking_title),
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
-            item(contentType = "contentType3") {
+            item(contentType = "subtitle") {
                 Text(
-                    text = subtitle,
+                    text = stringResource(ResourceR.string.core_resources_ranking_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
-            item(contentType = "contentType4") {
+            item(contentType = "tabs") {
                 PrimaryScrollableTabRow(
                     selectedTabIndex = tabs.indexOfFirst { it.first == selectedTab },
                     edgePadding = tabEdgePadding
@@ -134,39 +153,32 @@ fun RankingDesign(
 
             when (selectedTab) {
                 RankingTab.Online -> {
-                    item(contentType = "contentType5") {
-                        Text(
-                            text = stringResource(ResourceR.string.core_resources_ranking_online_not_implemented),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(8.dp)
-                        )
+                    item(contentType = "online") {
+                        OnlineComingSoon()
                     }
                 }
 
                 RankingTab.Offline -> {
                     if (isLoading) {
-                        item(contentType = "contentType6") {
+                        item(contentType = "loading") {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 16.dp),
+                                    .padding(vertical = 24.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 CircularProgressIndicator()
                             }
                         }
                     } else if (offlineRows.isEmpty()) {
-                        item(contentType = "contentType7") {
-                            Text(
-                                text = stringResource(ResourceR.string.core_resources_ranking_offline_empty),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(8.dp)
-                            )
+                        item(contentType = "empty") {
+                            EmptyRankingState()
                         }
                     } else {
-                        item(contentType = "contentType8") {
+                        item(contentType = "podium") {
+                            OfflineRankingPodium(offlineRows)
+                        }
+                        item(contentType = "tableHeader") {
                             RankingTableHeader(
                                 scrollState = tableScrollState,
                                 currentSort = offlineSort,
@@ -176,7 +188,7 @@ fun RankingDesign(
                         items(
                             items = offlineRows,
                             key = { row -> row.playerName },
-                            contentType = { _ -> "contentType9" }
+                            contentType = { _ -> "tableRow" }
                         ) { row ->
                             RankingTableRow(
                                 row = row,
@@ -193,7 +205,7 @@ fun RankingDesign(
             }
 
             if (!errorMessage.isNullOrBlank()) {
-                item(contentType = "contentType10") {
+                item(contentType = "error") {
                     Text(
                         text = errorMessage,
                         color = MaterialTheme.colorScheme.error,
@@ -202,6 +214,141 @@ fun RankingDesign(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun OfflineRankingPodium(rows: ImmutableList<OfflineRankingRowUi>) {
+    val first = rows.getOrNull(0)
+    val second = rows.getOrNull(1)
+    val third = rows.getOrNull(2)
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            if (second != null) {
+                PodiumSlot(name = second.playerName, wins = second.totalWins, place = 2, modifier = Modifier.weight(1f))
+            } else {
+                Spacer(modifier = Modifier.weight(1f))
+            }
+            if (first != null) {
+                PodiumSlot(name = first.playerName, wins = first.totalWins, place = 1, modifier = Modifier.weight(1f))
+            }
+            if (third != null) {
+                PodiumSlot(name = third.playerName, wins = third.totalWins, place = 3, modifier = Modifier.weight(1f))
+            } else {
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun PodiumSlot(name: String, wins: Int, place: Int, modifier: Modifier = Modifier) {
+    val color = when (place) {
+        1 -> GoldColor
+        2 -> SilverColor
+        else -> BronzeColor
+    }
+    val podiumHeight = when (place) {
+        1 -> 72.dp
+        2 -> 52.dp
+        else -> 40.dp
+    }
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.EmojiEvents,
+            contentDescription = null,
+            tint = color,
+            modifier = Modifier.size(22.dp)
+        )
+        Text(
+            text = name,
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = stringResource(ResourceR.string.core_resources_ranking_col_total) + ": $wins",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(podiumHeight)
+                .background(
+                    color = color.copy(alpha = 0.15f),
+                    shape = MaterialTheme.shapes.small
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "#$place",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = color
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmptyRankingState() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.EmojiEvents,
+            contentDescription = null,
+            modifier = Modifier.size(56.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+        )
+        Text(
+            text = stringResource(ResourceR.string.core_resources_ranking_offline_empty),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun OnlineComingSoon() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.CloudQueue,
+            contentDescription = null,
+            modifier = Modifier.size(56.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+        )
+        Text(
+            text = stringResource(ResourceR.string.core_resources_ranking_online_not_implemented),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
@@ -226,7 +373,11 @@ private fun RankingTableHeader(
 }
 
 @Composable
-private fun RankingTableRow(row: OfflineRankingRowUi, scrollState: androidx.compose.foundation.ScrollState, textStyle: androidx.compose.ui.text.TextStyle) {
+private fun RankingTableRow(
+    row: OfflineRankingRowUi,
+    scrollState: androidx.compose.foundation.ScrollState,
+    textStyle: TextStyle
+) {
     RankingTableCells(
         position = row.position.toString(),
         player = row.playerName,
@@ -234,7 +385,8 @@ private fun RankingTableRow(row: OfflineRankingRowUi, scrollState: androidx.comp
         impostorWins = row.impostorWins.toString(),
         totalWins = row.totalWins.toString(),
         textStyle = textStyle,
-        scrollState = scrollState
+        scrollState = scrollState,
+        positionMedalColor = medalColor(row.position)
     )
 }
 
@@ -246,13 +398,14 @@ private fun RankingTableCells(
     civilianWins: String,
     impostorWins: String,
     totalWins: String,
-    textStyle: androidx.compose.ui.text.TextStyle,
+    textStyle: TextStyle,
     scrollState: androidx.compose.foundation.ScrollState,
     isHeader: Boolean = false,
     currentSort: RankingOfflineSort = RankingOfflineSort(),
-    onSortBy: (RankingOfflineSortColumn) -> Unit = {}
+    onSortBy: (RankingOfflineSortColumn) -> Unit = {},
+    positionMedalColor: Color? = null
 ) {
-    androidx.compose.foundation.layout.Row(
+    Row(
         modifier = Modifier
             .then(
                 if (isHeader) {
@@ -273,7 +426,8 @@ private fun RankingTableCells(
             sortDirection = currentSort.direction.takeIf {
                 isHeader && currentSort.column == RankingOfflineSortColumn.Position
             },
-            onClick = { onSortBy(RankingOfflineSortColumn.Position) }
+            onClick = { onSortBy(RankingOfflineSortColumn.Position) },
+            medalColor = if (!isHeader) positionMedalColor else null
         )
         RankingTableCell(
             text = player,
@@ -283,7 +437,8 @@ private fun RankingTableCells(
             sortDirection = currentSort.direction.takeIf {
                 isHeader && currentSort.column == RankingOfflineSortColumn.Player
             },
-            onClick = { onSortBy(RankingOfflineSortColumn.Player) }
+            onClick = { onSortBy(RankingOfflineSortColumn.Player) },
+            medalColor = if (!isHeader) positionMedalColor else null
         )
         RankingTableCell(
             text = civilianWins,
@@ -322,26 +477,27 @@ private fun RankingTableCells(
 @Suppress("LongMethod")
 private fun RankingTableCell(
     text: String,
-    style: androidx.compose.ui.text.TextStyle,
+    style: TextStyle,
     modifier: Modifier,
     isHeader: Boolean,
     sortDirection: RankingSortDirection?,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    medalColor: Color? = null
 ) {
     if (!isHeader) {
         Text(
             text = text,
             style = style,
             modifier = modifier,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = medalColor ?: MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            fontWeight = FontWeight.Normal
+            fontWeight = if (medalColor != null) FontWeight.Bold else FontWeight.Normal
         )
         return
     }
 
-    androidx.compose.foundation.layout.Row(
+    Row(
         modifier = modifier.clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(2.dp)
@@ -361,11 +517,7 @@ private fun RankingTableCell(
             color = animatedHeaderColor.value,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            fontWeight = if (sortDirection != null) {
-                FontWeight.SemiBold
-            } else {
-                FontWeight.Normal
-            }
+            fontWeight = if (sortDirection != null) FontWeight.SemiBold else FontWeight.Normal
         )
         AnimatedVisibility(
             visible = sortDirection != null,
@@ -400,4 +552,3 @@ private fun Preview() {
         RankingDesign()
     }
 }
-

@@ -153,6 +153,8 @@
     <string name="core_resources_game_mode_timer_seconds">%1$d s</string>
     <string name="core_resources_game_mode_impostors_know">Los impostores se conocen</string>
     <string name="core_resources_game_mode_impostors_know_desc">Los impostores ven los nombres de los otros impostores en su carta de rol.</string>
+    <string name="core_resources_game_mode_num_impostors_know">Número de impostores</string>
+    <string name="core_resources_game_mode_num_impostors_know_desc">Ver el número de impostores</string>
 
     <string name="core_resources_face_environment">Entorno</string>
     <string name="core_resources_face_edit_mode">Personaliza tu juego</string>
@@ -178,6 +180,7 @@
     <string name="core_resources_swipe_up_reveal">Desliza hacia arriba para revelar</string>
     <string name="core_resources_role_impostor">Eres impostor</string>
     <string name="core_resources_role_civilian">Eres civil</string>
+    <string name="core_resources_impostor_teammates">Tus cómplices: %1$s</string>
     <string name="core_resources_clue_prefix">Pista: %1$s</string>
     <string name="core_resources_word_prefix">Palabra: %1$s</string>
     <string name="core_resources_next_player">Siguiente jugador</string>

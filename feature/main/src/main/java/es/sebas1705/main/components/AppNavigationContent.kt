@@ -126,7 +126,7 @@ internal fun AppNavigationContent(
                         appNavLogD("event open_debug_tools")
                         backStack.push(AppGraph.DebugToolsScreen)
                     },
-                    onOpenOfflineGame = { players, categories, modeName, impostors, showImpostorsInResult, discussionTimerSeconds, impostorsKnowEachOther ->
+                    onOpenOfflineGame = { players, categories, modeName, impostors, showImpostorsInResult, discussionTimerSeconds, impostorsKnowEachOther, showNumOfImpostors ->
                         appNavLogI(
                             "event open_offline_game players=${players.size} categories=${categories.size} " +
                                 "mode=$modeName impostors=$impostors showImpostorsInResult=$showImpostorsInResult " +
@@ -134,13 +134,14 @@ internal fun AppNavigationContent(
                         )
                         backStack.push(
                             AppGraph.OfflineGameScreen(
-                                players = players.toImmutableList(),
-                                categories = categories.toImmutableList(),
+                                players = players,
+                                categories = categories,
                                 modeName = modeName,
                                 impostors = impostors,
                                 showImpostorsInResult = showImpostorsInResult,
                                 discussionTimerSeconds = discussionTimerSeconds,
                                 impostorsKnowEachOther = impostorsKnowEachOther,
+                                showNumOfImpostors = showNumOfImpostors
                             )
                         )
                     },
@@ -163,6 +164,7 @@ internal fun AppNavigationContent(
                     showImpostorsInResult = route.showImpostorsInResult,
                     discussionTimerSeconds = route.discussionTimerSeconds,
                     impostorsKnowEachOther = route.impostorsKnowEachOther,
+                    showNumOfImpostors = route.showNumOfImpostors,
                     onBack = {
                         appNavLogI("event offline_back")
                         backStack.pop()

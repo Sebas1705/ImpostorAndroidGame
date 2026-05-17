@@ -12,5 +12,7 @@ dependencies {
     api(projects.core.designsystem)
     api(projects.domain.models)
     api(projects.domain.usescases.game)
+
+    api(projects.feature.home.face.common)
 }
 

@@ -9,7 +9,6 @@ data class RankingState(
     val selectedTab: RankingTab = RankingTab.Offline,
     val offlineRows: ImmutableList<OfflineRankingRowUi> = persistentListOf(),
     val offlineSort: RankingOfflineSort = RankingOfflineSort(),
-    val isLoading: Boolean = false,
     val errorMessage: String? = null
 ) : MVIBaseState
 

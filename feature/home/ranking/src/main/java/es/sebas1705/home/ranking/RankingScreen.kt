@@ -16,6 +16,7 @@ fun RankingScreen(
     rankingViewModel: RankingViewModel = hiltViewModel()
 ) {
     val uiState by rankingViewModel.uiState.collectAsStateWithLifecycle()
+    val loading by rankingViewModel.loading.collectAsStateWithLifecycle()
 
     LaunchedEffect(null) {
         rankingViewModel.eventHandler(RankingIntent.Load)
@@ -26,7 +27,7 @@ fun RankingScreen(
         selectedTab = uiState.selectedTab,
         offlineRows = uiState.offlineRows,
         offlineSort = uiState.offlineSort,
-        isLoading = uiState.isLoading,
+        isLoading = loading,
         errorMessage = uiState.errorMessage,
         onSelectTab = { rankingViewModel.eventHandler(RankingIntent.SelectTab(it)) },
         onToggleOfflineSort = { rankingViewModel.eventHandler(RankingIntent.ToggleOfflineSort(it)) }

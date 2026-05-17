@@ -56,8 +56,9 @@ fun OfflineGameScreen(
     mode: Modes,
     impostors: Int,
     showImpostorsInResult: Boolean,
-    discussionTimerSeconds: Int = 180,
-    impostorsKnowEachOther: Boolean = false,
+    discussionTimerSeconds: Int,
+    impostorsKnowEachOther: Boolean,
+    showNumOfImpostors: Boolean,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     viewModel: OfflineGameViewModel = hiltViewModel()
@@ -77,6 +78,7 @@ fun OfflineGameScreen(
                 impostors = impostors,
                 discussionTimerSeconds = discussionTimerSeconds,
                 impostorsKnowEachOther = impostorsKnowEachOther,
+                showNumOfImpostors = showNumOfImpostors
             )
         )
     }
@@ -135,6 +137,7 @@ private fun OfflineGameDesign(
         modifier = modifier
             .fillMaxSize()
             .navigationBarsPadding(),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.core_resources_offline_game_title)) },

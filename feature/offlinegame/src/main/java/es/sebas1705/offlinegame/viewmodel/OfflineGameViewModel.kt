@@ -53,6 +53,10 @@ class OfflineGameViewModel @Inject constructor(
     private fun initialize(
         intent: OfflineGameIntent.Initialize
     ) = execute(Dispatchers.IO) {
+        if (_uiState.value.wordEntry != null) {
+            logD("initialize skipped reason=already_initialized")
+            return@execute
+        }
         runCatching { mediaPlayerManager.changeSong(Musics.GAME) }
             .onFailure { logW("audio switch failed: ${it.message}") }
         logI(
@@ -360,7 +364,7 @@ class OfflineGameViewModel @Inject constructor(
         val maxImpostors = (playerCount - 1).coerceAtLeast(1)
         val resolved = when (mode) {
             Modes.Classic -> requested.coerceIn(1, maxImpostors)
-            Modes.Chaos -> Random.nextInt(from = 1, until = maxImpostors + 1)
+            Modes.Chaos -> Random.nextInt(from = 1, until = requested + 1)
         }
         logD(
             "resolveImpostorCount mode=$mode requested=$requested playerCount=$playerCount " +

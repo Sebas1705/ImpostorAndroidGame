@@ -1,7 +1,6 @@
 package es.sebas1705.main
 
 import androidx.navigation3.runtime.NavKey
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.serialization.Serializable
 
 /**
@@ -23,13 +22,14 @@ interface AppGraph: NavKey{
 
     @Serializable
     data class OfflineGameScreen(
-        val players: ImmutableList<String>,
-        val categories: ImmutableList<String>,
+        val players: List<String>,
+        val categories: List<String>,
         val modeName: String,
         val impostors: Int,
         val showImpostorsInResult: Boolean,
-        val discussionTimerSeconds: Int = 180,
-        val impostorsKnowEachOther: Boolean = false,
+        val discussionTimerSeconds: Int,
+        val impostorsKnowEachOther: Boolean,
+        val showNumOfImpostors: Boolean
     ) : AppGraph
 
 

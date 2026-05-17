@@ -3,6 +3,7 @@ package es.sebas1705.home.nav.viewmodel
 import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import es.sebas1705.common.FaceState
 import es.sebas1705.common.mvi.MVIBaseViewModel
 import es.sebas1705.common.utlis.extensions.types.logW
 import es.sebas1705.game.settings.ReadGameUseCase
@@ -20,6 +21,11 @@ class FaceViewModel @Inject constructor(
 
     override fun initState(): FaceState = FaceState()
 
+    override fun onInit() {
+        super.onInit()
+        startLoading()
+    }
+
     override fun intentHandler(intent: FaceIntent) =
         when (intent) {
             FaceIntent.Load -> load()
@@ -28,6 +34,7 @@ class FaceViewModel @Inject constructor(
     private fun load() = execute(Dispatchers.IO) {
         runCatching {
             readGameUseCase().collect { game ->
+                stopLoading()
                 updateUi {
                     it.copy(
                         categoriesStates = Categories.entries.associateWith { category ->
@@ -39,12 +46,14 @@ class FaceViewModel @Inject constructor(
                         showImpostorsInResult = game.showImpostorsInResult,
                         discussionTimerSeconds = game.discussionTimerSeconds,
                         impostorsKnowEachOther = game.impostorsKnowEachOther,
+                        showNumOfImpostors = game.showNumOfImpostors,
                         errorMessage = null,
                     )
                 }
             }
         }.onFailure { throwable ->
             logW("load failed: ${throwable.message}")
+            stopLoading()
             updateUi { it.copy(errorMessage = throwable.message) }
         }
     }

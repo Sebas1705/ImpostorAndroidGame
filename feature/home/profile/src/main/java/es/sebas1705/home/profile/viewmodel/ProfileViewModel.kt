@@ -31,6 +31,11 @@ class ProfileViewModel @Inject constructor(
         offlineRecordSort = readSavedProfileSort(savedStateHandle)
     )
 
+    override fun onInit() {
+        super.onInit()
+        startLoading()
+    }
+
     override fun intentHandler(intent: ProfileIntent) =
         when (intent) {
             ProfileIntent.Load -> loadProfileData()
@@ -41,7 +46,8 @@ class ProfileViewModel @Inject constructor(
         }
 
     private fun loadProfileData() = execute(Dispatchers.IO) {
-        updateUi { it.copy(isLoadingOfflineRecords = true, errorMessage = null) }
+        startLoading()
+        updateUi { it.copy(errorMessage = null) }
 
         runCatching {
             val game = readGameUseCase().first()
@@ -50,9 +56,9 @@ class ProfileViewModel @Inject constructor(
         }
             .onSuccess { payload ->
                 val currentSort = uiState.value.offlineRecordSort
+                stopLoading()
                 updateUi {
                     it.copy(
-                        isLoadingOfflineRecords = false,
                         offlineRecordRows = sortProfileOfflineRows(payload.offlineRows, currentSort),
                         rolePreference = payload.rolePreference,
                         favoriteCategory = payload.favoriteCategory,
@@ -63,12 +69,8 @@ class ProfileViewModel @Inject constructor(
                 }
             }
             .onFailure { throwable ->
-                updateUi {
-                    it.copy(
-                        isLoadingOfflineRecords = false,
-                        errorMessage = throwable.message
-                    )
-                }
+                stopLoading()
+                updateUi { it.copy(errorMessage = throwable.message) }
             }
     }
 

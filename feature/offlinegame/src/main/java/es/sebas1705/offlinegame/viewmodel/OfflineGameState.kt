@@ -22,6 +22,7 @@ data class OfflineGameState(
     val result: OfflineGameResult? = null,
     val discussionTimerSeconds: Int = 180,
     val impostorsKnowEachOther: Boolean = false,
+    val showNumOfImpostors: Boolean = false,
 ) : MVIBaseState {
     val hasMoreRevealPlayers: Boolean
         get() = currentRevealIndex < players.lastIndex

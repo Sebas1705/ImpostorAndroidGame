@@ -25,8 +25,8 @@ class GameSettingsRepository @Inject constructor(
         gamePreferencesDataSource.savePlayers(players)
     }
 
-    override suspend fun updateMode(mode: String, impostors: Int, showImpostorsInResult: Boolean, discussionTimerSeconds: Int, impostorsKnowEachOther: Boolean) {
-        gamePreferencesDataSource.saveMode(mode, impostors, showImpostorsInResult, discussionTimerSeconds, impostorsKnowEachOther)
+    override suspend fun updateMode(mode: String, impostors: Int, showImpostorsInResult: Boolean, discussionTimerSeconds: Int, impostorsKnowEachOther: Boolean, showNumOfImpostors: Boolean) {
+        gamePreferencesDataSource.saveMode(mode, impostors, showImpostorsInResult, discussionTimerSeconds, impostorsKnowEachOther, showNumOfImpostors)
     }
 }
 
