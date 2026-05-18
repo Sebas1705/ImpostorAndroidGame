@@ -21,6 +21,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import es.sebas1705.common.utlis.UiModePreviews
+import es.sebas1705.core.resources.Sounds
+import es.sebas1705.ui.sound.LocalSoundPlayer
 import es.sebas1705.ui.theme.AppTheme
 import es.sebas1705.core.resources.R as ResourceR
 
@@ -33,6 +35,7 @@ fun LoginDesign(
     onGoogleSignIn: () -> Unit = {},
     onDismissError: () -> Unit = {}
 ) {
+    val sound = LocalSoundPlayer.current
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -74,7 +77,7 @@ fun LoginDesign(
         }
 
         Button(
-            onClick = onGoogleSignIn,
+            onClick = { sound(Sounds.CLK_ARCADE); onGoogleSignIn() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
@@ -92,7 +95,7 @@ fun LoginDesign(
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium
             )
-            OutlinedButton(onClick = onDismissError, modifier = Modifier.fillMaxWidth()) {
+            OutlinedButton(onClick = { sound(Sounds.CLK_TAP); onDismissError() }, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(ResourceR.string.core_resources_dismiss))
             }
         }

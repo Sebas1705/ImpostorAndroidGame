@@ -54,6 +54,7 @@ class MediaPlayerManager @Inject constructor(
         context.resources.openRawResourceFd(music.resourceId).use { afd ->
             mediaPlayer.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
         }
+        mediaPlayer.isLooping = true
         mediaPlayer.prepare()
         mediaPlayer.start()
     }

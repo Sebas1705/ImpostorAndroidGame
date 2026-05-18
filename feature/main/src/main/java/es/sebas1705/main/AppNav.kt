@@ -25,6 +25,7 @@ import es.sebas1705.main.viewmodel.MainIntent
 import es.sebas1705.main.viewmodel.MainViewModel
 import es.sebas1705.models.DarkThemePreference
 import es.sebas1705.ui.adaptive.LocalForceCompactTables
+import es.sebas1705.ui.sound.LocalSoundPlayer
 import es.sebas1705.ui.theme.AppTheme
 import java.util.Locale
 
@@ -90,7 +91,8 @@ fun AppNav(
         themeContrast = mainState.themeContrast
     ) {
         CompositionLocalProvider(
-            LocalForceCompactTables provides mainState.forceCompactTables
+            LocalForceCompactTables provides mainState.forceCompactTables,
+            LocalSoundPlayer provides { sound -> mainViewModel.playClick(sound) }
         ) {
             AppNavDesign(
                 modifier = Modifier.fillMaxSize(),

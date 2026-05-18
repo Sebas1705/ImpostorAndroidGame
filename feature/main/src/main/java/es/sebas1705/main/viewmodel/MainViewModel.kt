@@ -8,7 +8,9 @@ import es.sebas1705.common.mvi.MVIBaseViewModel
 import es.sebas1705.common.utlis.extensions.types.logI
 import es.sebas1705.common.utlis.extensions.types.logW
 import es.sebas1705.core.resources.Musics
+import es.sebas1705.core.resources.Sounds
 import es.sebas1705.domain.managers.MediaPlayerManager
+import es.sebas1705.domain.managers.SoundPoolManager
 import es.sebas1705.game.words.ImportDefaultWordsUseCase
 import es.sebas1705.settings.ReadSettingsUseCase
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +30,7 @@ class MainViewModel @Inject constructor(
     private val readSettingsUseCase: ReadSettingsUseCase,
     private val importDefaultWordsUseCase: ImportDefaultWordsUseCase,
     private val mediaPlayerManager: MediaPlayerManager,
+    private val soundPoolManager: SoundPoolManager,
     @ApplicationContext context: Context
 ) : MVIBaseViewModel<MainState, MainIntent>(context) {
 
@@ -53,6 +56,11 @@ class MainViewModel @Inject constructor(
     }
 
     override fun initState(): MainState = MainState()
+
+    fun playClick(sound: Sounds = Sounds.CLK_TAP) {
+        runCatching { soundPoolManager.play(sound) }
+            .onFailure { logW("playClick failed: ${it.message}") }
+    }
 
     override fun intentHandler(intent: MainIntent) =
         when (intent) {
