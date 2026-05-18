@@ -45,6 +45,8 @@ class LocalNetworkServer {
     val port: Int get() = serverSocket?.localPort ?: 0
 
     fun start(hostPlayer: OnlinePlayer) {
+        // Host is already "in the room" — seed the list so observers see them immediately.
+        _connectedPlayers.value = listOf(hostPlayer)
         serverSocket = ServerSocket(0)
         scope.launch {
             while (isActive) {

@@ -13,5 +13,6 @@ dependencies {
     api(projects.domain.usescases.authentication)
     api(projects.domain.usescases.ranking)
     api(projects.domain.usescases.game)
+    implementation(libs.coil.compose)
 }
 

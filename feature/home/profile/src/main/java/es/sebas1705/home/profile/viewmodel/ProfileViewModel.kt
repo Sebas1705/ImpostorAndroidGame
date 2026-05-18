@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import es.sebas1705.authentication.GetUserProfileDataUseCase
 import es.sebas1705.authentication.SignOutUseCase
 import es.sebas1705.common.mvi.MVIBaseViewModel
 import es.sebas1705.core.resources.R
@@ -23,6 +24,7 @@ class ProfileViewModel @Inject constructor(
     private val signOutUseCase: SignOutUseCase,
     private val readOfflineRankingUseCase: ReadOfflineRankingUseCase,
     private val readGameUseCase: ReadGameUseCase,
+    private val getUserProfileDataUseCase: GetUserProfileDataUseCase,
     private val savedStateHandle: SavedStateHandle,
     @ApplicationContext context: Context
 ) : MVIBaseViewModel<ProfileState, ProfileIntent>(context) {
@@ -48,6 +50,16 @@ class ProfileViewModel @Inject constructor(
     private fun loadProfileData() = execute(Dispatchers.IO) {
         startLoading()
         updateUi { it.copy(errorMessage = null) }
+
+        // Load Google user profile immediately (synchronous — no network call).
+        val userProfile = getUserProfileDataUseCase()
+        updateUi {
+            it.copy(
+                userName = userProfile.displayName,
+                userEmail = userProfile.email,
+                userPhotoUrl = userProfile.photoUrl,
+            )
+        }
 
         runCatching {
             val game = readGameUseCase().first()
@@ -229,4 +241,3 @@ private fun sortableProfileValue(
     ProfileOfflineRecordSortColumn.TotalWins -> row.totalWins
     ProfileOfflineRecordSortColumn.CurrentStreak -> row.currentStreak
 }
-

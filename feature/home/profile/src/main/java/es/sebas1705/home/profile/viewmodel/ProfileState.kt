@@ -16,7 +16,14 @@ data class ProfileState(
     val favoriteCategory: Categories? = null,
     val matchesPlayed: Int = 0,
     val currentStreak: Int = 0,
-    val bestStreak: Int = 0
+    val bestStreak: Int = 0,
+    // ── Google user fields ────────────────────────────────────────────────────
+    /** User's Google display name (e.g. "María García"). Null while loading. */
+    val userName: String? = null,
+    /** Account e-mail address. */
+    val userEmail: String? = null,
+    /** HTTPS URL of the Google profile photo. Null if unavailable. */
+    val userPhotoUrl: String? = null,
 ) : MVIBaseState
 
 data class ProfileOfflineRecordSort(

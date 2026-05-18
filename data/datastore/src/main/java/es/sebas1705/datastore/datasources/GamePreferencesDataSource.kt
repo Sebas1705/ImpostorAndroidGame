@@ -113,6 +113,12 @@ class GamePreferencesDataSource @Inject constructor(
 
     fun getGameData() = gameData
 
+    suspend fun saveNickname(nickname: String) = gamePreferences.updateData {
+        it.toBuilder().setNickname(nickname).build()
+    }
+
+    fun getNickname(): kotlinx.coroutines.flow.Flow<String> = gamePreferences.data.map { it.nickname }
+
     private companion object {
         val DEFAULT_PLAYERS = listOf("Player1", "Player2", "Player3", "Player4")
         // Must match Modes.Classic.name — keep in sync if the enum is renamed

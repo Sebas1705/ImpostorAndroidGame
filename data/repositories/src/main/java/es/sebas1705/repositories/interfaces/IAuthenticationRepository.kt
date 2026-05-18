@@ -97,4 +97,14 @@ interface IAuthenticationRepository {
      */
     suspend fun setSessionExpected(value: Boolean)
 
+    // ── Google user profile ───────────────────────────────────────────────────
+
+    /** Display name set on the Google account (e.g. "María García"). */
+    fun getUserDisplayName(): String?
+
+    /** E-mail address of the current user. */
+    fun getUserEmail(): String?
+
+    /** HTTPS URL of the Google profile photo, or null. */
+    fun getUserPhotoUrl(): String?
 }

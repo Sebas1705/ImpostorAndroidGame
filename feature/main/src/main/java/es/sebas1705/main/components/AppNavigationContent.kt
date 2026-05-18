@@ -146,17 +146,36 @@ internal fun AppNavigationContent(
                             )
                         )
                     },
-                    onOpenOnlineGame = {
-                        appNavLogI("event open_online_game")
-                        backStack.push(AppGraph.OnlineGameScreen)
+                    onOpenOnlineGame = { categories, modeName, impostors, networkMode ->
+                        appNavLogI(
+                            "event open_online_game categories=${categories.size} " +
+                                "mode=$modeName impostors=$impostors networkMode=$networkMode"
+                        )
+                        backStack.push(
+                            AppGraph.OnlineGameScreen(
+                                categories = categories,
+                                modeName = modeName,
+                                impostors = impostors,
+                                networkMode = networkMode,
+                            )
+                        )
                     },
                     onOpenSettings = onOpenSettings
                 )
             }
-            entry<AppGraph.OnlineGameScreen> {
-                appNavLogI("render OnlineGameScreen")
+            entry<AppGraph.OnlineGameScreen> { route ->
+                appNavLogI(
+                    "render OnlineGameScreen categories=${route.categories.size} " +
+                        "mode=${route.modeName} impostors=${route.impostors} network=${route.networkMode}"
+                )
                 OnlineGameScreen(
                     modifier = Modifier.fillMaxSize(),
+                    categories = route.categories
+                        .mapNotNull { name -> Categories.entries.firstOrNull { it.name == name } }
+                        .toImmutableSet(),
+                    modeName = route.modeName,
+                    impostors = route.impostors,
+                    networkMode = route.networkMode,
                     onBack = {
                         appNavLogI("event online_back")
                         backStack.pop()

@@ -33,6 +33,9 @@ fun ProfileScreen(
 
     ProfileDesign(
         modifier = modifier,
+        userName = uiState.userName,
+        userEmail = uiState.userEmail,
+        userPhotoUrl = uiState.userPhotoUrl,
         selectedTab = uiState.selectedTab,
         isLoadingOfflineRecords = loading,
         offlineRecordRows = uiState.offlineRecordRows,

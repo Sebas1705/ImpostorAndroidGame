@@ -51,9 +51,10 @@ internal fun OnlineLobbyScreen(
     onJoinRoom: (room: GameRoom, playerName: String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    savedNickname: String = "",
 ) {
     var showCreateSheet by rememberSaveable { mutableStateOf(false) }
-    var playerName by rememberSaveable { mutableStateOf("") }
+    var playerName by rememberSaveable(savedNickname) { mutableStateOf(savedNickname) }
     var joiningRoom by rememberSaveable { mutableStateOf<GameRoom?>(null) }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)

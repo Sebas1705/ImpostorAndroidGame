@@ -1,34 +1,54 @@
 package es.sebas1705.onlinegame.viewmodel
 
 import es.sebas1705.common.mvi.MVIBaseIntent
+import es.sebas1705.models.Categories
 import es.sebas1705.models.GameRoom
+import es.sebas1705.models.Modes
 import es.sebas1705.models.NetworkMode
 
 sealed interface OnlineGameIntent : MVIBaseIntent {
 
-    /** Player selected a network mode (Local / Internet). */
-    data class SelectMode(val mode: NetworkMode) : OnlineGameIntent
+    /** Called once when the screen opens. Sets up lobby observation. */
+    data class Initialize(
+        val categories: Set<Categories>,
+        val mode: Modes,
+        val impostors: Int,
+        val networkMode: NetworkMode,
+    ) : OnlineGameIntent
 
-    /** Host: create and publish a room. */
+    /** Host: create and publish a new room. */
     data class CreateRoom(val playerName: String, val maxPlayers: Int) : OnlineGameIntent
 
-    /** Client: join an existing room from the lobby list. */
+    /** Client: join an existing room. */
     data class JoinRoom(val room: GameRoom, val playerName: String) : OnlineGameIntent
 
-    /** Host only: start the game when enough players are in the lobby. */
+    /** Host only: update game config from the waiting room. */
+    data class UpdateGameConfig(
+        val categories: Set<Categories>,
+        val mode: Modes,
+        val impostors: Int,
+        val discussionTimerSeconds: Int,
+        val impostorsKnowEachOther: Boolean,
+        val showNumOfImpostors: Boolean,
+    ) : OnlineGameIntent
+
+    /** Host only: start the game when ready. */
     data object StartGame : OnlineGameIntent
 
-    /** In-game: current player has seen their card. */
+    /** Every player: confirm they saw their reveal card. */
     data object MarkRevealDone : OnlineGameIntent
 
-    /** In-game: move to next player's card. */
-    data object NextRevealPlayer : OnlineGameIntent
+    /** Any player: send a chat message during discussion. */
+    data class SendChatMessage(val content: String) : OnlineGameIntent
 
-    /** In-game: vote to eliminate a player. */
+    /** Host only: vote to eliminate a player. */
     data class VotePlayer(val playerIndex: Int) : OnlineGameIntent
 
-    /** In-game: impostor tries to guess the word. */
+    /** Impostor: guess the word. */
     data class SubmitGuess(val value: String) : OnlineGameIntent
+
+    /** Every player: accept the result and return to the room. */
+    data object AcceptResult : OnlineGameIntent
 
     /** Leave / disconnect from the current session. */
     data object Disconnect : OnlineGameIntent

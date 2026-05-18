@@ -6,20 +6,20 @@ import es.sebas1705.models.NetworkMode
 import es.sebas1705.models.OnlineGameState
 import es.sebas1705.models.OnlinePlayer
 import es.sebas1705.models.PlayerAction
+import es.sebas1705.network.interfaces.IOnlineGameTransport
+import es.sebas1705.network.interfaces.IOnlineLobbyRepository
 import es.sebas1705.network.messages.NetworkMessage
 import es.sebas1705.network.nsd.NsdHelper
 import es.sebas1705.network.tcp.LocalNetworkClient
 import es.sebas1705.network.tcp.LocalNetworkServer
-import es.sebas1705.network.interfaces.IOnlineGameTransport
-import es.sebas1705.network.interfaces.IOnlineLobbyRepository
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 /**
  * Local-network implementation of both the lobby discovery and the game transport.
@@ -35,6 +35,9 @@ class LocalNetworkTransport(
 
     private var server: LocalNetworkServer? = null
     private var client: LocalNetworkClient? = null
+    /** Holds the coroutine that keeps the NSD registration alive. */
+    private var nsdJob: Job? = null
+
     val isHost: Boolean get() = server != null
 
     // ── IOnlineLobbyRepository ─────────────────────────────────────────────
@@ -47,18 +50,30 @@ class LocalNetworkTransport(
         srv.start(localPlayer)
         val port = srv.port
 
-        var registrationResult: Result<Unit> = Result.failure(RuntimeException("Timeout"))
-        nsdHelper.registerService(
-            hostName = hostName,
-            port = port,
-            maxPlayers = maxPlayers,
-            roomId = roomId,
-        ).collect { result ->
-            registrationResult = result
-            return@collect
+        // We need the first registration result to return to the caller, but the NSD
+        // flow must stay alive to keep the service announced on the network.
+        // Solution: launch the collect in scope (stays alive), signal the caller via
+        // CompletableDeferred once the first result arrives.
+        val registered = CompletableDeferred<Result<Unit>>()
+
+        nsdJob = scope.launch {
+            nsdHelper.registerService(
+                hostName = hostName,
+                port = port,
+                maxPlayers = maxPlayers,
+                roomId = roomId,
+            ).collect { result ->
+                // Signal the first result only once; then keep collecting (flow stays open,
+                // which keeps the NSD registration alive on the network).
+                if (!registered.isCompleted) registered.complete(result)
+            }
+            // Flow closed (registration failed or service unregistered externally).
+            if (!registered.isCompleted) {
+                registered.complete(Result.failure(RuntimeException("NSD flow closed unexpectedly")))
+            }
         }
 
-        return registrationResult.map {
+        return registered.await().map {
             GameRoom(
                 id = roomId,
                 hostName = hostName,
@@ -72,18 +87,25 @@ class LocalNetworkTransport(
     }
 
     override suspend fun deleteRoom(roomId: String): Result<Unit> {
+        // Cancelling nsdJob triggers awaitClose → nsdManager.unregisterService.
+        nsdJob?.cancel()
+        nsdJob = null
         server?.stop()
         server = null
         return Result.success(Unit)
     }
 
-    fun joinRoom(room: GameRoom) {
+    private fun joinRoomInternal(room: GameRoom) {
         val cli = LocalNetworkClient().also { client = it }
         cli.connect(
             hostAddress = room.hostAddress,
             port = room.port,
             localPlayer = localPlayer,
         )
+    }
+
+    override suspend fun joinRoom(room: GameRoom): Result<Unit> = runCatching {
+        joinRoomInternal(room)
     }
 
     // ── IOnlineGameTransport ───────────────────────────────────────────────
@@ -114,6 +136,8 @@ class LocalNetworkTransport(
         }
 
     override suspend fun disconnect() {
+        nsdJob?.cancel()
+        nsdJob = null
         server?.stop()
         client?.stop()
         server = null

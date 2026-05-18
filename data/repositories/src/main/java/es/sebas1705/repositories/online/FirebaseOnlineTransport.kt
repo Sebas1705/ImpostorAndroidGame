@@ -1,6 +1,7 @@
 package es.sebas1705.repositories.online
 
 import es.sebas1705.firestore.lobby.GameRoomFirestoreDataSource
+import es.sebas1705.firestore.usage.InternetUsageDataSource
 import es.sebas1705.models.GameRoom
 import es.sebas1705.models.OnlineGameState
 import es.sebas1705.models.OnlinePlayer
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.emptyFlow
  *
  * Lobby  → Firestore `game_rooms` collection (tiny reads/writes, deleted on game end).
  * Game   → RTDB `games/{roomId}` (personalized state per player, deleted on game end).
+ * Usage  → Firestore `config/internet_usage` (atomic daily session counter, guards free-tier).
  *
  * Firebase usage is minimised: the Firestore room document and the RTDB game node
  * are both removed as soon as the game ends or the host disconnects.
@@ -24,6 +26,7 @@ class FirebaseOnlineTransport(
     override val localPlayer: OnlinePlayer,
     private val lobbySource: GameRoomFirestoreDataSource,
     private val rtdbSource: RtdbGameDataSource,
+    private val usageSource: InternetUsageDataSource,
 ) : IOnlineGameTransport, IOnlineLobbyRepository {
 
     private var currentRoomId: String? = null
@@ -33,12 +36,27 @@ class FirebaseOnlineTransport(
     override fun observeRooms(): Flow<List<GameRoom>> = lobbySource.observeRooms()
 
     override suspend fun createRoom(hostName: String, maxPlayers: Int): Result<GameRoom> {
+        // Guard: atomically claim one daily Internet session slot before touching any
+        // other Firebase resource. Returns a user-readable failure when the cap is reached.
+        usageSource.tryClaimSession().getOrElse { return Result.failure(it) }
+
         val result = lobbySource.createRoom(hostName, maxPlayers)
         result.onSuccess { room ->
             currentRoomId = room.id
             rtdbSource.registerOnDisconnectCleanup(room.id)
+            rtdbSource.writeRoomMember(room.id, localPlayer)
+            rtdbSource.registerRoomHostDisconnectCleanup(room.id)
         }
         return result
+    }
+
+    override suspend fun joinRoom(room: GameRoom): Result<Unit> {
+        currentRoomId = room.id
+        rtdbSource.writeRoomMember(room.id, localPlayer)
+            .onFailure { return Result.failure(it) }
+        rtdbSource.registerRoomMemberDisconnectCleanup(room.id, localPlayer.id)
+        lobbySource.updatePlayerCount(room.id, +1)
+        return Result.success(Unit)
     }
 
     override suspend fun deleteRoom(roomId: String): Result<Unit> {
@@ -58,9 +76,10 @@ class FirebaseOnlineTransport(
         return rtdbSource.observeActions(roomId)
     }
 
-    override fun observeConnectedPlayers(): Flow<List<OnlinePlayer>> =
-        // For internet mode, player list is managed via game state broadcasts.
-        emptyFlow()
+    override fun observeConnectedPlayers(): Flow<List<OnlinePlayer>> {
+        val roomId = currentRoomId ?: return emptyFlow()
+        return rtdbSource.observeRoomMembers(roomId)
+    }
 
     override suspend fun sendStateTo(playerId: String, state: OnlineGameState): Result<Unit> {
         val roomId = currentRoomId ?: return Result.failure(IllegalStateException("No active room"))
@@ -73,12 +92,14 @@ class FirebaseOnlineTransport(
     }
 
     override suspend fun disconnect() {
-        currentRoomId?.let {
+        currentRoomId?.let { roomId ->
             if (localPlayer.isHost) {
-                lobbySource.deleteRoom(it)
-                rtdbSource.deleteRoom(it)
+                lobbySource.deleteRoom(roomId)
+                rtdbSource.deleteRoom(roomId)
+                rtdbSource.deleteRoomNode(roomId)
             } else {
-                lobbySource.updatePlayerCount(it, -1)
+                rtdbSource.removeRoomMember(roomId, localPlayer.id)
+                lobbySource.updatePlayerCount(roomId, -1)
             }
         }
         currentRoomId = null

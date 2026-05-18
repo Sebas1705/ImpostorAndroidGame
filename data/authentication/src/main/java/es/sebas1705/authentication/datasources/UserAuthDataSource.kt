@@ -66,6 +66,18 @@ class UserAuthDataSource @Inject constructor(
 
     fun getCurrentUser(): FirebaseUser? = firebaseAuth.currentUser
 
+    /** Returns the UID of the current user without exposing [FirebaseUser] to callers. */
+    fun getCurrentUid(): String? = firebaseAuth.currentUser?.uid
+
+    /** Google display name (e.g. "María García"). */
+    fun getUserDisplayName(): String? = firebaseAuth.currentUser?.displayName
+
+    /** Account e-mail address. */
+    fun getUserEmail(): String? = firebaseAuth.currentUser?.email
+
+    /** HTTPS URL of the Google profile photo, or null if unavailable. */
+    fun getUserPhotoUrl(): String? = firebaseAuth.currentUser?.photoUrl?.toString()
+
     private fun maskUid(uid: String): String =
         if (uid.length <= 6) uid else "${uid.take(3)}...${uid.takeLast(3)}"
 }

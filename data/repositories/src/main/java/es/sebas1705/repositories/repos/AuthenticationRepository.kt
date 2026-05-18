@@ -54,4 +54,10 @@ class AuthenticationRepository @Inject constructor(
     override suspend fun setSessionExpected(value: Boolean) {
         settingsPreferencesDataSource.saveAuthSessionExpected(value)
     }
+
+    // ── Google user profile ───────────────────────────────────────────────────
+
+    override fun getUserDisplayName(): String? = userAuthDataSource.getUserDisplayName()
+    override fun getUserEmail(): String? = userAuthDataSource.getUserEmail()
+    override fun getUserPhotoUrl(): String? = userAuthDataSource.getUserPhotoUrl()
 }

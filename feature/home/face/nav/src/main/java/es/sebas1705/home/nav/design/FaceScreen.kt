@@ -13,7 +13,7 @@ fun FaceScreen(
     onOpenCategories: () -> Unit = {},
     onOpenMode: () -> Unit = {},
     onStartOfflineGame: () -> Unit = {},
-    onStartOnlineGame: () -> Unit = {},
+    onStartOnlineGame: (networkMode: String) -> Unit = {},
     onOpenSettings: () -> Unit = {},
 ) {
     FaceDesign(

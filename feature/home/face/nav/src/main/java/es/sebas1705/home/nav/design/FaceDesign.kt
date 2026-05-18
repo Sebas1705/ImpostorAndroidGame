@@ -61,7 +61,7 @@ fun FaceDesign(
     onOpenCategories: () -> Unit = {},
     onOpenMode: () -> Unit = {},
     onStartOfflineGame: () -> Unit = {},
-    onStartOnlineGame: () -> Unit = {},
+    onStartOnlineGame: (networkMode: String) -> Unit = {},
     onOpenSettings: () -> Unit = {}
 ) {
     val selectedOffline = rememberSaveable { mutableStateOf(true) }
@@ -137,24 +137,6 @@ fun FaceDesign(
                                 )
                             }
                         }
-                        if (!selectedOffline.value) {
-                            item(contentType = "online_start") {
-                                FilledTonalButton(
-                                    onClick = onStartOnlineGame,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.CloudQueue,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Text(
-                                        text = stringResource(R.string.core_resources_face_start_online_game),
-                                        modifier = Modifier.padding(start = 6.dp)
-                                    )
-                                }
-                            }
-                        }
                         if (!faceState.errorMessage.isNullOrBlank()) {
                             item(contentType = "error") {
                                 Text(
@@ -214,9 +196,66 @@ fun FaceDesign(
                             }
                         }
                     } else {
-                        Box(Modifier
-                            .weight(1f)
-                            .fillMaxHeight())
+                        LazyColumn(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .padding(start = 12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            item(contentType = "online_edit_title_r") {
+                                Text(
+                                    text = stringResource(R.string.core_resources_face_edit_mode),
+                                    style = MaterialTheme.typography.titleLarge.makeTitle(),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            item(contentType = "online_cat_r") {
+                                FaceCategoriesCard(faceState, onOpenCategories)
+                            }
+                            item(contentType = "online_mode_r") {
+                                FaceModeCard(faceState, onOpenMode)
+                            }
+                            item(contentType = "online_chips_r") {
+                                OnlineConfigChips(faceState)
+                            }
+                            item(contentType = "online_local_r") {
+                                FilledTonalButton(
+                                    onClick = { onStartOnlineGame("Local") },
+                                    enabled = faceState.categoriesStates.any { it.value },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.OfflineBolt,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.core_resources_face_start_local_game),
+                                        modifier = Modifier.padding(start = 6.dp)
+                                    )
+                                }
+                            }
+                            item(contentType = "online_internet_r") {
+                                FilledTonalButton(
+                                    onClick = { onStartOnlineGame("Internet") },
+                                    enabled = faceState.categoriesStates.any { it.value },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 8.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.CloudQueue,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.core_resources_face_start_online_game),
+                                        modifier = Modifier.padding(start = 6.dp)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             } else {
@@ -288,10 +327,46 @@ fun FaceDesign(
                             }
                         }
                     } else {
-                        item(contentType = "contentType9") {
+                        item(contentType = "contentType_online_edit") {
+                            Text(
+                                text = stringResource(R.string.core_resources_face_edit_mode),
+                                style = MaterialTheme.typography.titleLarge.makeTitle(),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        item(contentType = "contentType_online_cat") {
+                            FaceCategoriesCard(faceState, onOpenCategories)
+                        }
+                        item(contentType = "contentType_online_mode") {
+                            FaceModeCard(faceState, onOpenMode)
+                        }
+                        item(contentType = "contentType_online_chips") {
+                            OnlineConfigChips(faceState)
+                        }
+                        item(contentType = "contentType_online_local") {
                             FilledTonalButton(
-                                onClick = onStartOnlineGame,
-                                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                                onClick = { onStartOnlineGame("Local") },
+                                enabled = faceState.categoriesStates.any { it.value },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.OfflineBolt,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Text(
+                                    text = stringResource(R.string.core_resources_face_start_local_game),
+                                    modifier = Modifier.padding(start = 6.dp)
+                                )
+                            }
+                        }
+                        item(contentType = "contentType_online_internet") {
+                            FilledTonalButton(
+                                onClick = { onStartOnlineGame("Internet") },
+                                enabled = faceState.categoriesStates.any { it.value },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 8.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Outlined.CloudQueue,
@@ -502,6 +577,59 @@ private fun GameConfigChips(faceState: FaceState) {
                 )
             )
         }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun OnlineConfigChips(faceState: FaceState) {
+    val selectedCategories = faceState.categoriesStates.count { it.value }
+    val categoriesOk = selectedCategories >= 1
+
+    FlowRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        SuggestionChip(
+            onClick = {},
+            label = {
+                Text(
+                    text = if (categoriesOk)
+                        stringResource(R.string.core_resources_face_ready_categories, selectedCategories)
+                    else stringResource(R.string.core_resources_face_warn_categories)
+                )
+            },
+            icon = {
+                Icon(
+                    imageVector = if (categoriesOk) Icons.Outlined.CheckCircle else Icons.Outlined.Warning,
+                    contentDescription = null,
+                    modifier = Modifier.size(SuggestionChipDefaults.IconSize),
+                    tint = if (categoriesOk) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                )
+            },
+            colors = SuggestionChipDefaults.suggestionChipColors(
+                containerColor = if (categoriesOk) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                else MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
+            )
+        )
+        SuggestionChip(
+            onClick = {},
+            label = { Text(text = "${faceState.mode.name} ×${faceState.impostors}") },
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.Settings,
+                    contentDescription = null,
+                    modifier = Modifier.size(SuggestionChipDefaults.IconSize),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            colors = SuggestionChipDefaults.suggestionChipColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+            )
+        )
     }
 }
 

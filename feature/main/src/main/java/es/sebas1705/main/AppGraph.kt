@@ -35,7 +35,12 @@ interface AppGraph: NavKey{
 
 
     @Serializable
-    object OnlineGameScreen : AppGraph
+    data class OnlineGameScreen(
+        val categories: List<String>,
+        val modeName: String,
+        val impostors: Int,
+        val networkMode: String,   // NetworkMode.name()
+    ) : AppGraph
 
     @Serializable
     object DebugToolsScreen : AppGraph

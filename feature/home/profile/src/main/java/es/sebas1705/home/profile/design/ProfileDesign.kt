@@ -55,7 +55,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import es.sebas1705.common.utlis.UiModePreviews
 import es.sebas1705.feature.home.profile.BuildConfig
-import es.sebas1705.home.profile.components.ProfileBannerCard
+import es.sebas1705.home.profile.components.ProfileHeaderCard
 import es.sebas1705.home.profile.models.OfflineProfileRecordRowUi
 import es.sebas1705.home.profile.viewmodel.ProfileOfflineRecordSort
 import es.sebas1705.home.profile.viewmodel.ProfileOfflineRecordSortColumn
@@ -75,6 +75,9 @@ import es.sebas1705.core.resources.R as ResourceR
 @Suppress("LongMethod", "LongParameterList", "CyclomaticComplexMethod")
 fun ProfileDesign(
     modifier: Modifier = Modifier,
+    userName: String? = null,
+    userEmail: String? = null,
+    userPhotoUrl: String? = null,
     selectedTab: ProfileTab = ProfileTab.OfflineRecord,
     isLoadingOfflineRecords: Boolean = false,
     offlineRecordRows: ImmutableList<OfflineProfileRecordRowUi> = persistentListOf(),
@@ -113,21 +116,11 @@ fun ProfileDesign(
                 .padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item(contentType = "banner") {
-                ProfileBannerCard()
-            }
-            item(contentType = "title") {
-                Text(
-                    text = stringResource(ResourceR.string.core_resources_profile_title),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-            item(contentType = "subtitle") {
-                Text(
-                    text = stringResource(ResourceR.string.core_resources_profile_subtitle),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+            item(contentType = "header") {
+                ProfileHeaderCard(
+                    displayName = userName,
+                    email = userEmail,
+                    photoUrl = userPhotoUrl,
                 )
             }
 

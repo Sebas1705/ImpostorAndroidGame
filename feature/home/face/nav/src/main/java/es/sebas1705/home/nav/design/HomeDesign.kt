@@ -118,7 +118,12 @@ fun HomeDesign(
         impostorsKnowEachOther: Boolean,
         showNumOfImpostors: Boolean
     ) -> Unit = { _, _, _, _, _, _, _, _ -> },
-    onOpenOnlineGame: () -> Unit = {},
+    onOpenOnlineGame: (
+        categories: List<String>,
+        modeName: String,
+        impostors: Int,
+        networkMode: String,
+    ) -> Unit = { _, _, _, _ -> },
     faceViewModel: FaceViewModel = hiltViewModel()
 ) {
     val faceState by faceViewModel.uiState.collectAsStateWithLifecycle()
@@ -282,9 +287,21 @@ fun HomeDesign(
                                 faceState.showNumOfImpostors
                             )
                         },
-                        onStartOnlineGame = {
-                            homeDesignLogI("start online game")
-                            onOpenOnlineGame()
+                        onStartOnlineGame = { networkMode ->
+                            homeDesignLogI(
+                                "start online game networkMode=$networkMode " +
+                                    "categories=${faceState.categoriesStates.count { it.value }} " +
+                                    "mode=${faceState.mode} impostors=${faceState.impostors}"
+                            )
+                            onOpenOnlineGame(
+                                faceState.categoriesStates
+                                    .filter { it.value }
+                                    .keys
+                                    .map { it.name },
+                                faceState.mode.name,
+                                faceState.impostors,
+                                networkMode,
+                            )
                         },
                         onOpenSettings = onOpenSettings
                     )
