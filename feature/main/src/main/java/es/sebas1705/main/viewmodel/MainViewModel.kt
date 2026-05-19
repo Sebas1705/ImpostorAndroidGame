@@ -3,7 +3,10 @@ package es.sebas1705.main.viewmodel
 import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import es.sebas1705.authentication.IsEmailVerifiedUseCase
+import es.sebas1705.authentication.IsGuestUserUseCase
 import es.sebas1705.authentication.IsUserLoggedUseCase
+import es.sebas1705.authentication.SignOutUseCase
 import es.sebas1705.common.mvi.MVIBaseViewModel
 import es.sebas1705.common.utlis.extensions.types.logI
 import es.sebas1705.common.utlis.extensions.types.logW
@@ -27,6 +30,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val isUserLoggedUseCase: IsUserLoggedUseCase,
+    private val isGuestUserUseCase: IsGuestUserUseCase,
+    private val isEmailVerifiedUseCase: IsEmailVerifiedUseCase,
+    private val signOutUseCase: SignOutUseCase,
     private val readSettingsUseCase: ReadSettingsUseCase,
     private val importDefaultWordsUseCase: ImportDefaultWordsUseCase,
     private val mediaPlayerManager: MediaPlayerManager,
@@ -45,6 +51,7 @@ class MainViewModel @Inject constructor(
                     .onFailure { logW("setVolume failed: ${it.message}") }
                 updateUi {
                     it.copy(
+                        soundVolume = settings.soundVolume,
                         appLanguage = settings.appLanguage,
                         themeContrast = settings.appContrast,
                         forceCompactTables = settings.forceCompactTables,
@@ -57,14 +64,15 @@ class MainViewModel @Inject constructor(
 
     override fun initState(): MainState = MainState()
 
-    fun playClick(sound: Sounds = Sounds.CLK_TAP) {
-        runCatching { soundPoolManager.play(sound) }
+    fun playClick(sound: Sounds = Sounds.CLK_TAP, volume: Float = 1f) {
+        runCatching { soundPoolManager.play(sound, volume) }
             .onFailure { logW("playClick failed: ${it.message}") }
     }
 
     override fun intentHandler(intent: MainIntent) =
         when (intent) {
             is MainIntent.ChargeData -> chargeData()
+            is MainIntent.SetGuestUser -> updateUi { it.copy(isGuestUser = intent.isGuest) }
         }
 
 
@@ -77,11 +85,20 @@ class MainViewModel @Inject constructor(
     private fun chargeData() = execute(Dispatchers.IO) {
         importDefaultWordsUseCase()
         val isUserLogged = isUserLoggedUseCase()
-        logI("Splash auth decision. isUserLogged=$isUserLogged")
+        val isGuest = isGuestUserUseCase()
+        // A non-guest user whose email isn't verified shouldn't bypass login
+        if (isUserLogged && !isGuest && !isEmailVerifiedUseCase()) {
+            logI("Splash auth decision. User logged but email not verified — signing out.")
+            signOutUseCase()
+            updateUi { it.copy(splashFinished = true, isUserLogged = false, isGuestUser = false) }
+            return@execute
+        }
+        logI("Splash auth decision. isUserLogged=$isUserLogged isGuest=$isGuest")
         updateUi {
             it.copy(
                 splashFinished = true,
-                isUserLogged = isUserLogged
+                isUserLogged = isUserLogged,
+                isGuestUser = isGuest
             )
         }
     }

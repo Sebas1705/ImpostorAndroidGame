@@ -85,6 +85,8 @@ private fun backwardTransition() = ContentTransform(
 @Suppress("LongMethod")
 internal fun AppNavigationContent(
     backStack: NavBackStack<NavKey>,
+    isGuestUser: Boolean,
+    onGuestStatusChange: (Boolean) -> Unit,
     onOpenSettings: () -> Unit,
 ) {
     LaunchedEffect(backStack.lastOrNull()) {
@@ -108,8 +110,9 @@ internal fun AppNavigationContent(
             entry<AppGraph.LoginScreen> {
                 appNavLogI("render LoginScreen")
                 LoginScreen(
-                    onLoginSuccess = {
-                        appNavLogI("event login_success -> HomeScreen")
+                    onLoginSuccess = { isGuest ->
+                        appNavLogI("event login_success isGuest=$isGuest -> HomeScreen")
+                        onGuestStatusChange(isGuest)
                         backStack.pushAndFree(AppGraph.HomeScreen)
                     }
                 )
@@ -118,6 +121,7 @@ internal fun AppNavigationContent(
                 appNavLogI("render HomeScreen")
                 HomeNav(
                     modifier = Modifier.fillMaxSize(),
+                    isGuestUser = isGuestUser,
                     onSignOut = {
                         appNavLogI("event sign_out -> LoginScreen")
                         backStack.pushAndFree(AppGraph.LoginScreen)

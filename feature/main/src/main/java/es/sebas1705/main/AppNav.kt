@@ -92,11 +92,15 @@ fun AppNav(
     ) {
         CompositionLocalProvider(
             LocalForceCompactTables provides mainState.forceCompactTables,
-            LocalSoundPlayer provides { sound -> mainViewModel.playClick(sound) }
+            LocalSoundPlayer provides { sound -> mainViewModel.playClick(sound, mainState.soundVolume) }
         ) {
             AppNavDesign(
                 modifier = Modifier.fillMaxSize(),
                 backStack = backStack,
+                isGuestUser = mainState.isGuestUser,
+                onGuestStatusChange = { isGuest ->
+                    mainViewModel.eventHandler(MainIntent.SetGuestUser(isGuest))
+                },
                 overlayState = AppNavOverlayState(
                     currentDestination = currentDestination,
                     showSettingsDialog = showSettingsDialog.value

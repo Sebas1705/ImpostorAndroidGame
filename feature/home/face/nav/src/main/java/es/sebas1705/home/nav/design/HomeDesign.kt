@@ -107,6 +107,7 @@ private fun homeBackwardTransition() = ContentTransform(
 fun HomeDesign(
     modifier: Modifier = Modifier,
     backStack: NavBackStack<NavKey> = NavBackStack(HomeGraph.FaceScreen),
+    isGuestUser: Boolean = false,
     onSignOut: () -> Unit = {},
     onDebugNav: () -> Unit = {},
     onOpenSettings: () -> Unit = {},

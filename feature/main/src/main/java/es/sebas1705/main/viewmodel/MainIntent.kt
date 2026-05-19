@@ -15,4 +15,5 @@ import es.sebas1705.common.mvi.MVIBaseIntent
 sealed interface MainIntent : MVIBaseIntent {
 
     data object ChargeData : MainIntent
+    data class SetGuestUser(val isGuest: Boolean) : MainIntent
 }
